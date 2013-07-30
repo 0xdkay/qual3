@@ -1,0 +1,24 @@
+doctype html
+html
+  head
+    title Slim Examples
+    meta name="author" content="DKay"
+    css:
+      body {
+        background: black;
+        color: lightgreen;
+        text-align: center;
+      }
+
+  body
+    #header
+      h1 GoN Newbie Practice
+      hr
+
+    #content
+      == yield
+
+    #footer
+      | Copyright © 2013 DKay
+
+
