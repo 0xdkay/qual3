@@ -4,15 +4,10 @@ require 'sinatra'
 require 'slim'
 
 #custom
-require 'levels'
-require 'test'
-require 'auth'
+require 'pages'
 
 class Webserver < Sinatra::Base
-	register Sinatra::Example
 	register Sinatra::SessionAuth
-	register Sinatra::Level1
-	register Sinatra::Level2
 
   #set :static, true
 	set :sessions, true
@@ -25,10 +20,26 @@ class Webserver < Sinatra::Base
 	set :some_custom_option, false
 =end
 	set :show_exceptions, false
-	set :public_folder, File.dirname(__FILE__) + '/html'
+	set :public_folder, File.dirname(__FILE__) + '/public'
 
 	get '/' do 
 		slim :index
+	end
+
+	get '/home' do
+		slim :index
+	end
+
+	get '/chal' do
+		slim :index
+	end
+
+	get '/email' do
+		slim :index
+	end
+
+	post '/email' do
+		"Email posted"
 	end
 
 	get '/*' do

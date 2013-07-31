@@ -1,9 +1,66 @@
-== slim :main
-  li
-    a href="level1"
-      h2 level1
+html
+  head
+    title Qual the 3rd. | Qualification test for GoN
+    meta content="text/html; charset=utf-8" http-equiv="content-type"
+    meta content="" name="description"
+    meta content="" name="keywords"
+    link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400" rel="stylesheet"
+    script src="js/jquery.min.js"
+    script src="js/config.js"
+    script src="js/skel.min.js"
+    noscript
+      link href="css/skel-noscript.css" rel="stylesheet"
+      link href="css/style.css" rel="stylesheet"
+      link href="css/style-desktop.css" rel="stylesheet"
+      link href="css/noscript.css" rel="stylesheet"
+    /![if lte IE 8] <script src="js/html5shiv.js"></script><link rel="stylesheet" href="css/ie8.css" />
+  body.homepage
+    /! Wrapper
+    #wrapper
+      /! Nav
+      nav#nav
+        a.icon.icon-home.active href="#home"
+          span Home
+        a.icon.icon-info-sign href="#notice"
+          span Notice
+        a.icon.icon-check href="#rule"
+          span Rules
+        a.icon.icon-folder-close href="#chal"
+          span Challenge
+        a.icon.icon-envelope href="#email"
+          span Contact Us
+        a.icon.icon-signin href="#login"
+          span Login
 
-  li
-    a href="level2"
-      h2 level2
+      /! Main
+      #main
+        /! Home
+        article#home.panel
+          == slim :home
+
+        /! Notice
+        article#notice.panel
+          == slim :notice
+
+        /! Rules
+        article#rule.panel
+          == slim :rule
+
+
+        /! Chal
+        article#chal.panel
+          == slim :chal
+
+        /! Email
+        article#email.panel
+          == slim :email
+
+      /! Footer
+      #footer
+        | Copyright &copy; 2013 
+        a href="http://gon.kaist.ac.kr"
+          | GoN  
+        | | Design from 
+        a href="http://html5up.net/"
+          | html5up
 

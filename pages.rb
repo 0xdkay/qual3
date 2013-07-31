@@ -1,5 +1,5 @@
 
-list = Dir.glob("levels/*").select {|v| v =~ /level.*/}
+list = Dir.glob("pages/*").select {|v| v =~ /.*\.rb/}
 list.delete __FILE__
 
 list.each do |v|
