@@ -250,6 +250,11 @@
 		margin-bottom: 0;
 	}
 
+	  article div
+    {
+      word-break: keep-all;
+    }
+
 	.image
 	{
 		display: inline-block;
@@ -303,12 +308,12 @@
 
 		.button:hover
 		{
-			background-color: #333333;
+			background-color: #555555;
 		}
 		
-		.button:active
+		.button:active,
 		{
-			background-color: #444444;
+			background-color: #777777;
 		}
 	
 		.button-alt

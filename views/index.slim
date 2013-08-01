@@ -8,6 +8,7 @@ html
     script src="js/jquery.min.js"
     script src="js/config.js"
     script src="js/skel.min.js"
+    script src="js/custom.js"
     noscript
       link href="css/skel-noscript.css" rel="stylesheet"
       link href="css/style.css" rel="stylesheet"
@@ -15,6 +16,9 @@ html
       link href="css/noscript.css" rel="stylesheet"
     /![if lte IE 8] <script src="js/html5shiv.js"></script><link rel="stylesheet" href="css/ie8.css" />
   body.homepage
+    #welcome
+      | Welcome! #{session[:id]}
+
     /! Wrapper
     #wrapper
       /! Nav
@@ -29,31 +33,34 @@ html
           span Challenge
         a.icon.icon-envelope href="#email"
           span Contact Us
-        a.icon.icon-signin href="#login"
-          span Login
+        - if session[:id]
+          a.icon.icon-signout href="/logout"
+            span Logout
+        - else
+          a.icon.icon-signin href="#login"
+            span Login
 
       /! Main
       #main
         /! Home
-        article#home.panel
-          == slim :home
+        == slim :home
 
         /! Notice
-        article#notice.panel
-          == slim :notice
+        == slim :notice
 
         /! Rules
-        article#rule.panel
-          == slim :rule
-
+        == slim :rule
 
         /! Chal
-        article#chal.panel
-          == slim :chal
+        == slim :chal
 
         /! Email
-        article#email.panel
-          == slim :email
+        == slim :email
+
+        /! Login
+        - if not session[:id]
+          == slim :login
+
 
       /! Footer
       #footer

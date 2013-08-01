@@ -27,16 +27,14 @@ module Sinatra
 
 			app.get '/login' do
 				redirect '/'  if authorized?
-				slim :login
 			end
 
 			app.post '/login' do
 				if params[:id] == options.username && params[:pw] == options.password
 					session[:id] = params[:id]
-					redirect '/'
+					"true"
 				else
-					session[:id] = nil
-					redirect '/login'
+					"wrong"
 				end
 			end
 		end

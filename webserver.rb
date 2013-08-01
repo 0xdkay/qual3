@@ -2,6 +2,7 @@ $:.unshift(".")
 require 'rubygems' if RUBY_VERSION < "1.9"
 require 'sinatra'
 require 'slim'
+require 'coffee_script'
 
 #custom
 require 'pages'

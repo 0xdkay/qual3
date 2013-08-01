@@ -1,18 +1,19 @@
-header
-  h2 Contact Us
-form action="email" method="post"
-  div
-    .row.half
-      .6u
-        input.text name="name" placeholder="Name" type="text"
-      .6u
-        input.text name="email" placeholder="Email" type="text"
-    .row.half
-      .12u
-        input.text name="subject" placeholder="Subject" type="text"
-    .row.half
-      .12u
-        textarea name="message" placeholder="Message"
-    .row
-      .12u
-        input.button type="submit" value="Send Message"
+article#email.panel
+  header
+    h2 Contact Us
+  form action="email" method="post"
+    div
+      .row.half
+        .6u
+          input.text name="name" placeholder="Name" type="text" required=""
+        .6u
+          input.text name="email" placeholder="Email" type="email" required=""
+      .row.half
+        .12u
+          input.text name="subject" placeholder="Subject" type="text" required=""
+      .row.half
+        .12u
+          textarea name="message" placeholder="Message"
+      .row
+        .12u
+          input.button type="submit" value="Send Message"

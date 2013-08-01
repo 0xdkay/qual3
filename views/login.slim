@@ -1,0 +1,27 @@
+article#login.panel
+  header
+    h2 Login
+
+  form#login action="" method="get" onsubmit="return loginCheck(id, pw)"
+    div
+      .row.half
+        .6u
+          #login-data
+
+      .row.half
+        .6u
+          input.text type="text" name="id" placeholder="Username" required="" autofocus=""
+      .row.half
+        .6u
+          input.text type="password" name="pw" placeholder="Password" required=""
+      .row
+        .12u
+          input.button type="submit" value="Log in" 
+    br
+    .row
+      .12u
+        a href="#" onclick="alert(1);"
+          | Lost your Password?
+      .12u
+        a href="#" onclick="alert(2);"
+          | Register
