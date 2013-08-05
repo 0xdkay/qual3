@@ -122,14 +122,17 @@ class DB
         when /prob/
             check_args = [:category, :title, :author, :body, :auth, :score]
         when /score/
+        when /recovery/
+            check_args = [:mail]
         end
         check_params_helper args, check_args
     end
 
 
     def insert_user args
-        return false if not @db.execute("SELECT id FROM #{@user_table} WHERE id=:id",
-                                                                        "id" => args[:id]).empty?
+        return false if not @db.execute("SELECT id FROM #{@user_table} WHERE id=:id or mail=:mail",
+                                                                        "id" => args[:id],
+                                                                        "mail" => args[:mail]).empty?
 
         true if @db.execute("INSERT INTO #{@user_table} (id, pw, name, sno, mail, date, ip)
                                     SELECT :id, :pw, :name, :sno, :mail, :date, :ip
@@ -166,8 +169,12 @@ class DB
         true
     end
 
+    def check_mail args
+        return false if @db.execute("SELECT mail FROM #{@user_table} WHERE mail=:mail",
+                                                                "mail" => args[:mail]).empty?
+        true
+    end
 end
-
 
 
 

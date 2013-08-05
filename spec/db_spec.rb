@@ -23,6 +23,8 @@ describe DB do
             :score => 500,
             :file => nil
         }
+
+        @mail = {:mail => @user_data[:mail]}
     end
 
     it "should create database correctly" do
@@ -33,16 +35,18 @@ describe DB do
     it "should check params before insert" do
         @db.check_params("user", @user_data).should == true
 
+        prev = @user_data[:mail]
         @user_data[:mail] = nil
         @db.check_params("user", @user_data).should == false
 
-        @user_data[:mail] = "asdf@asdf.com"
+        @user_data[:mail] = prev
         @db.check_params("user", @user_data).should == true
 
+        prev = @prob_data[:score]
         @prob_data[:score] = nil
         @db.check_params("prob", @prob_data).should == false
 
-        @prob_data[:score] = 500
+        @prob_data[:score] = prev
         @db.check_params("prob", @prob_data).should == true
     end
 
@@ -52,6 +56,13 @@ describe DB do
 
     it "should check if user id already exists" do
         @db.insert_user(@user_data).should == false
+    end
+
+    it "should check if user mail already exists" do
+        prev = @user_data[:id]
+        @user_data[:id] = "asdf"
+        @db.insert_user(@user_data).should == false
+        @user_data[:id] = prev
     end
 
     it "should insert new problem data corrently" do
@@ -65,8 +76,19 @@ describe DB do
     it "should login correctly with given id and pw" do
         @db.check_login(@user_data).should == true
 
-        @user_data[:id] = "aa"
+        prev = @user_data[:id]
+        @user_data[:id] = "asdfa"
         @db.check_login(@user_data).should == false
+        @user_data[:id] = prev
+    end
+
+    it "should check if mail is valid for recovery" do
+        prev = @mail[:mail]
+        @mail[:mail] = "aaaa@aaaa.com"
+        @db.check_mail(@mail).should == false
+        @mail[:mail] = prev
+
+        @db.check_mail(@mail).should == true
     end
 
     after(:all) do 
