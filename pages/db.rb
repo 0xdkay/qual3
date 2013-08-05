@@ -105,7 +105,7 @@ class DB
 
     end
 
-    def check_params_helper input, check
+    def check_params check, input
         check.each do |v|
             if not input[v]
                 return false
@@ -114,27 +114,14 @@ class DB
         return true
     end
 
-    def check_params table, args
-        case table
-        when /user/
-            check_args = [:id, :pw, :name, :sno, :mail, :ip]
-        when /notice/
-        when /prob/
-            check_args = [:category, :title, :author, :body, :auth, :score]
-        when /score/
-        when /recovery/
-            check_args = [:mail]
-        end
-        check_params_helper args, check_args
-    end
-
-
     def insert_user args
-        return false if not @db.execute("SELECT id FROM #{@user_table} WHERE id=:id or mail=:mail",
+        check_args = [:id, :pw, :name, :sno, :mail, :ip]
+        return -1 if not check_params check_args, args
+        return 0 if not @db.execute("SELECT id FROM #{@user_table} WHERE id=:id or mail=:mail",
                                                                         "id" => args[:id],
                                                                         "mail" => args[:mail]).empty?
 
-        true if @db.execute("INSERT INTO #{@user_table} (id, pw, name, sno, mail, date, ip)
+        return 1 if @db.execute("INSERT INTO #{@user_table} (id, pw, name, sno, mail, date, ip)
                                     SELECT :id, :pw, :name, :sno, :mail, :date, :ip
                                 WHERE NOT EXISTS (SELECT id FROM #{@user_table} WHERE id=:id);",
                                 "id" => args[:id],
@@ -147,9 +134,11 @@ class DB
     end
 
     def insert_prob args
-        return false if not @db.execute("SELECT title FROM #{@prob_table} WHERE title=:title",
+        check_args = [:category, :title, :author, :body, :auth, :score]
+        return -1 if not check_params check_args, args
+        return 0 if not @db.execute("SELECT title FROM #{@prob_table} WHERE title=:title",
                                                                         "title" => args[:title]).empty?
-        true if @db.execute("INSERT INTO #{@prob_table} (category, title, author, body, auth, score, file, date)
+        return 1 if @db.execute("INSERT INTO #{@prob_table} (category, title, author, body, auth, score, file, date)
                                     SELECT :category, :title, :author, :body, :auth, :score, :file, :date
                                 WHERE NOT EXISTS (SELECT title FROM #{@prob_table} WHERE title=:title);",
                                 "category" => args[:category],
@@ -163,16 +152,20 @@ class DB
     end
 
     def check_login args
-        return false if @db.execute("SELECT id FROM #{@user_table} WHERE id=:id AND pw=:pw",
+        check_args = [:id, :pw]
+        return -1 if not check_params check_args, args
+        return 0 if @db.execute("SELECT id FROM #{@user_table} WHERE id=:id AND pw=:pw",
                                 "id" => args[:id],
                                 "pw" => Digest::SHA1.hexdigest(args[:pw])).empty?
-        true
+        return 1
     end
 
     def check_mail args
-        return false if @db.execute("SELECT mail FROM #{@user_table} WHERE mail=:mail",
+        check_args = [:mail]
+        return -1 if not check_params check_args, args
+        return 0 if @db.execute("SELECT mail FROM #{@user_table} WHERE mail=:mail",
                                                                 "mail" => args[:mail]).empty?
-        true
+        return 1
     end
 end
 

@@ -32,63 +32,59 @@ describe DB do
         @db.should_not == nil
     end
 
-    it "should check params before insert" do
-        @db.check_params("user", @user_data).should == true
-
+    it "should check params before insert new user" do
         prev = @user_data[:mail]
         @user_data[:mail] = nil
-        @db.check_params("user", @user_data).should == false
-
+        @db.insert_user(@user_data).should == -1
         @user_data[:mail] = prev
-        @db.check_params("user", @user_data).should == true
-
-        prev = @prob_data[:score]
-        @prob_data[:score] = nil
-        @db.check_params("prob", @prob_data).should == false
-
-        @prob_data[:score] = prev
-        @db.check_params("prob", @prob_data).should == true
     end
 
     it "should insert new user data correctly" do
-        @db.insert_user(@user_data).should == true
+        @db.insert_user(@user_data).should == 1
     end
 
     it "should check if user id already exists" do
-        @db.insert_user(@user_data).should == false
+        @db.insert_user(@user_data).should == 0
     end
 
     it "should check if user mail already exists" do
         prev = @user_data[:id]
         @user_data[:id] = "asdf"
-        @db.insert_user(@user_data).should == false
+        @db.insert_user(@user_data).should == 0
         @user_data[:id] = prev
     end
 
+    it "should check params before insert new problem" do
+        prev = @prob_data[:score]
+        @prob_data[:score] = nil
+        @db.insert_prob(@prob_data).should == -1
+        @prob_data[:score] = prev
+    end
+
     it "should insert new problem data corrently" do
-        @db.insert_prob(@prob_data).should == true
+        @db.insert_prob(@prob_data).should == 1
     end
 
     it "should check if problem title already exists" do
-        @db.insert_prob(@prob_data).should == false
+        @db.insert_prob(@prob_data).should == 0
     end
 
     it "should login correctly with given id and pw" do
-        @db.check_login(@user_data).should == true
+        @db.check_login(@user_data).should == 1
 
         prev = @user_data[:id]
         @user_data[:id] = "asdfa"
-        @db.check_login(@user_data).should == false
+        @db.check_login(@user_data).should == 0
         @user_data[:id] = prev
     end
 
     it "should check if mail is valid for recovery" do
         prev = @mail[:mail]
         @mail[:mail] = "aaaa@aaaa.com"
-        @db.check_mail(@mail).should == false
+        @db.check_mail(@mail).should == 0
         @mail[:mail] = prev
 
-        @db.check_mail(@mail).should == true
+        @db.check_mail(@mail).should == 1
     end
 
     after(:all) do 

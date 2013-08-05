@@ -30,7 +30,10 @@ module Sinatra
             end
 
             app.post '/login' do
-                if params[:id] == settings.username && params[:pw] == settings.password
+                data = {}
+                data[:id] = params[:id]
+                data[:pw] = params[:pw]
+                if @db.check_login data
                     session[:id] = params[:id]
                     "true"
                 else

@@ -8,42 +8,43 @@ require 'coffee_script'
 require 'pages'
 
 class Webserver < Sinatra::Base
-	register Sinatra::SessionAuth
+    register Sinatra::SessionAuth
+    @db = DB.new
 
   #set :static, true
-	set :sessions, true
-	set :username, "test"
-	set :password, "secret"
+    set :sessions, true
+    set :username, "test"
+    set :password, "secret"
 
 =begin
-	set :logging, true
-	set :dump_errors, false
-	set :some_custom_option, false
+    set :logging, true
+    set :dump_errors, false
+    set :some_custom_option, false
 =end
-	set :show_exceptions, false
-	set :public_folder, File.dirname(__FILE__) + '/public'
+    set :show_exceptions, false
+    set :public_folder, File.dirname(__FILE__) + '/public'
 
-	get '/' do 
-		slim :index
-	end
+    get '/' do 
+        slim :index
+    end
 
-	get '/home' do
-		slim :index
-	end
+    get '/home' do
+        slim :index
+    end
 
-	get '/chal' do
-		slim :index
-	end
+    get '/chal' do
+        slim :index
+    end
 
-	get '/email' do
-		slim :index
-	end
+    get '/email' do
+        slim :index
+    end
 
-	post '/email' do
-		"Email posted"
-	end
+    post '/email' do
+        "Email posted"
+    end
 
-	get '/*' do
-		"page not found"
-	end
+    get '/*' do
+        "page not found"
+    end
 end
