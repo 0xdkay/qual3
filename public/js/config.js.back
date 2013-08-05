@@ -34,7 +34,7 @@ jQuery(window).load(function() {
 	/*********************************************************************************/
 
 		var settings = {
-			resizeSpeed:	300,		// Speed to resize panel
+			resizeSpeed:	500,		// Speed to resize panel
 			fadeSpeed:		200,		// Speed to fade in/out
 			sizeFactor:		11.5,		// Size factor
 			sizeMin:		15,			// Minimum point size
@@ -58,7 +58,6 @@ jQuery(window).load(function() {
 		var	panels = [],
 			activePanelId = null,
 			firstPanelId = null,
-			isLocked = false,
 			isTouch = !!('ontouchstart' in window),
 			isLegacyIE = (navigator.userAgent.match(/MSIE ([0-9]+)\./) && RegExp.$1 <= 9);
 		
@@ -86,11 +85,11 @@ jQuery(window).load(function() {
 				_body.h5u_reposition = function() {
 					/*
 					if (isTouch && (window.orientation == 0 || window.orientation == 180))
-						_wrapper.css('padding-top', Math.max(((_window.height() - (panels[activePanelId].outerHeight() + _footer.outerHeight())) / 2) - _nav.height(), 30) + 'px');
-					else
 						_wrapper.css('padding-top', (((_window.height() - panels[firstPanelId].height()) / 2) - _nav.height()) + 'px');
+					else
+						_wrapper.css('padding-top', Math.max(((_window.height() - (panels[activePanelId].outerHeight() + _footer.outerHeight())) / 2) - _nav.height(), 30) + 'px');
 					*/
-					_wrapper.css('padding-top', '100px');
+					_wrapper.css('padding-top','100px');
 				};
 				
 			// Panels
@@ -115,7 +114,6 @@ jQuery(window).load(function() {
 								return false;
 
 						// Lock
-							isLocked = true;
 							
 						// Change nav link (if it exists)
 							_nav_links.removeClass('active');
@@ -161,13 +159,12 @@ jQuery(window).load(function() {
 
 												});
 										});
-									
 							});
-					
 					};
 				});
 
 			// Nav + Jumplinks
+			/*
 				_nav_links.add(_jumplinks).click(function(e) {
 					var t = jQuery(this), href = t.attr('href'), id;
 				
@@ -182,13 +179,20 @@ jQuery(window).load(function() {
 							panels[id].h5u_activate();
 					}
 				});
-
+			*/
+			
 			// Window
 				_window
 					.resize(function() {
 						if (!isLocked)
 							_body.h5u_resize();
 					});
+
+			// if hash exists
+			id = location.hash.substring(1);
+			if (id in panels)
+				panels[id].h5u_activate();
+
 
 			// Forms (IE <= 9 only)
 				if (isLegacyIE)
@@ -200,12 +204,6 @@ jQuery(window).load(function() {
 
 				_wrapper
 					.fadeTo(400, 1.0);
-
-			// if hash exists
-			id = location.hash.substring(1);
-			if (id in panels)
-				panels[id].h5u_activate();
-
 		}
 
 		$(window).bind("hashchange", function() {
@@ -213,5 +211,4 @@ jQuery(window).load(function() {
 			if (id in panels)
 				panels[id].h5u_activate();
 		});
-	
 });

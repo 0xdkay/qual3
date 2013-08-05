@@ -1,19 +1,25 @@
 article#chal.panel
+  
   header
     h2 Problems
-  p
-    | Enjoy your problem!
-  section.is-gallery
-    .row.half
-      .2u
-        a.image.image-full href="http://flypixel.com/knob/3495684098026313"
-          img alt="" src="images/1.jpg"
-      .4u
-        a.image.image-full href="http://flypixel.com/knob/3495684098026313"
-          img alt="" src="images/1.jpg"
-      .4u
-        a.image.image-full href="http://flypixel.com/contact-login-form/8829734266026310"
-          img alt="" src="images/2.jpg"
-      .4u
-        a.image.image-full href="http://flypixel.com/wallpaper-pack/3755398966026313"
-          img alt="" src="images/3.jpg"
+  - if session[:id]
+    p
+      | Enjoy your problem!
+    section.is-gallery
+      .row.half
+        .2u
+          a.image.image-full href="http://flypixel.com/knob/3495684098026313"
+            img alt="" src="images/1.jpg"
+        .4u
+          a.image.image-full href="http://flypixel.com/knob/3495684098026313"
+            img alt="" src="images/1.jpg"
+        .4u
+          a.image.image-full href="http://flypixel.com/contact-login-form/8829734266026310"
+            img alt="" src="images/2.jpg"
+        .4u
+          a.image.image-full href="http://flypixel.com/wallpaper-pack/3755398966026313"
+            img alt="" src="images/3.jpg"
+  - else
+    p
+      span.red
+        | You must login first

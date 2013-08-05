@@ -15,3 +15,10 @@ function loginCheck(id, pw)
 	return false;
 }
 
+function forgetPass()
+{
+}
+
+function registerID()
+{
+}

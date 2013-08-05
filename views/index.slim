@@ -16,8 +16,9 @@ html
       link href="css/noscript.css" rel="stylesheet"
     /![if lte IE 8] <script src="js/html5shiv.js"></script><link rel="stylesheet" href="css/ie8.css" />
   body.homepage
-    #welcome
-      | Welcome! #{session[:id]}
+    - if session[:id]
+      #welcome
+        | Welcome! #{session[:id]}
 
     /! Wrapper
     #wrapper
@@ -60,6 +61,10 @@ html
         /! Login
         - if not session[:id]
           == slim :login
+
+        /! Join
+        - if not session[:id]
+          == slim :register
 
 
       /! Footer
