@@ -62,9 +62,13 @@ html
         - if not session[:id]
           == slim :login
 
-        /! Join
+        /! Register
         - if not session[:id]
           == slim :register
+
+        /! Forgot Password
+        - if not session[:id]
+          == slim :recovery
 
 
       /! Footer

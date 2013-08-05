@@ -1,0 +1,17 @@
+article#recovery.panel
+  header
+    h2 Password Recovery
+
+  form#register action="" method="get" onsubmit="return forgotCheck(email)"
+    div
+      .row.half
+        .6u
+          #login-data
+
+      .row.half
+        .6u
+          input.text type="text" name="email" placeholder="Recovery Email" required="" autofocus=""
+      .row
+        .12u
+          input.button type="submit" value="Send Temporary Password" 
+
