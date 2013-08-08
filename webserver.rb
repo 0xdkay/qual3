@@ -5,16 +5,16 @@ require 'slim'
 require 'coffee_script'
 
 #custom
-require 'pages'
+require 'libs'
 
 class Webserver < Sinatra::Base
+    $key = File.read("register_key").chomp
+    $secret = File.read("token_key").chomp
+    $db_name = Dir.glob("*.db")[0]
     register Sinatra::SessionAuth
-    @db = DB.new
 
   #set :static, true
     set :sessions, true
-    set :username, "test"
-    set :password, "secret"
 
 =begin
     set :logging, true
@@ -28,15 +28,7 @@ class Webserver < Sinatra::Base
         slim :index
     end
 
-    get '/home' do
-        slim :index
-    end
-
     get '/chal' do
-        slim :index
-    end
-
-    get '/email' do
         slim :index
     end
 

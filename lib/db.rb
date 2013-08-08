@@ -21,6 +21,7 @@ class DB
             'ldate' timestamp DEFAULT NULL,
             'ip' varchar(50) NOT NULL,
             'lip' varchar(50) DEFAULT NULL,
+            'token' varchar(50) DEFAULT NULL,
             PRIMARY KEY ('id')
         )
         "
@@ -105,6 +106,12 @@ class DB
 
     end
 
+
+    protected
+    def encrypt data
+        Digest::SHA1.hexdigest(data+$secret)
+    end
+
     def check_params check, input
         check.each do |v|
             if not input[v]
@@ -113,6 +120,12 @@ class DB
         end
         return true
     end
+
+    def new_token mail
+        token = encrypt(mail+Time.now.utc.to_s)
+    end
+
+    public
 
     def insert_user args
         check_args = [:id, :pw, :name, :sno, :mail, :ip]
@@ -125,7 +138,7 @@ class DB
                                     SELECT :id, :pw, :name, :sno, :mail, :date, :ip
                                 WHERE NOT EXISTS (SELECT id FROM #{@user_table} WHERE id=:id);",
                                 "id" => args[:id],
-                                "pw" => Digest::SHA1.hexdigest(args[:pw]),
+                                "pw" => encrypt(args[:pw]),
                                 "name" => args[:name],
                                 "sno" => args[:sno],
                                 "mail" => args[:mail],
@@ -152,11 +165,13 @@ class DB
     end
 
     def check_login args
-        check_args = [:id, :pw]
+        check_args = [:id, :pw, :ip]
         return -1 if not check_params check_args, args
         return 0 if @db.execute("SELECT id FROM #{@user_table} WHERE id=:id AND pw=:pw",
                                 "id" => args[:id],
-                                "pw" => Digest::SHA1.hexdigest(args[:pw])).empty?
+                                "pw" => encrypt(args[:pw])).empty?
+        @db.execute("UPDATE #{@user_table} SET lip=:ip WHERE id=:id",
+                                "ip" => args[:ip])
         return 1
     end
 
@@ -165,9 +180,36 @@ class DB
         return -1 if not check_params check_args, args
         return 0 if @db.execute("SELECT mail FROM #{@user_table} WHERE mail=:mail",
                                                                 "mail" => args[:mail]).empty?
+        token = new_token args[:mail]
+        @db.execute("UPDATE #{@user_table} SET token=:token WHERE mail=:mail",
+                                "mail" => args[:mail],
+                                "token" => token)
+        return token
+    end
+
+    def check_token args
+        check_args = [:token]
+        return -1 if not check_params check_args, args
+        p @db.execute("SELECT token FROM #{@user_table} WHERE token=:token",
+                                    "token" => args[:token])
+        return 0 if @db.execute("SELECT mail FROM #{@user_table} WHERE token=:token",
+                                                        "token" => args[:token]).empty?
+        return 1
+    end
+    
+    def reset_password args
+        check_args = [:token, :pw]
+        return -1 if not check_params check_args, args
+        p args
+        p args[:token]
+        p @db.execute("SELECT token FROM #{@user_table}")
+        p @db.execute("SELECT token FROM #{@user_table} WHERE token=:token",
+                                 "token" => args[:token])
+        @db.execute("UPDATE #{@user_table} SET pw=:pw and token=NULL WHERE token=:token",
+                                "pw" => args[:pw],
+                                "token" => args[:token].strip)
         return 1
     end
 end
-
 
 

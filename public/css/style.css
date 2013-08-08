@@ -248,7 +248,6 @@
     section,
     article
     {
-      font-family: "Nanum";
         margin-bottom: 3em;
     }
     
@@ -267,6 +266,11 @@
       article div
     {
       word-break: keep-all;
+    }
+
+    article#rule
+    {
+      font-family: "Nanum";
     }
 
     .image

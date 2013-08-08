@@ -2,25 +2,29 @@ article#register.panel
   header
     h2 Register
 
-  form#register action="" method="get" onsubmit="return registerCheck(id, pw)"
+  form#register action="" method="post" onsubmit="return registerCheck(this)"
     div
       .row.half
-        .6u
-          #login-data
-
+        .12u
+          .msg#register-data
       .row.half
         .6u
-          input.text type="text" name="id" placeholder="Username" required="" autofocus=""
+          input.text type="text" name="id" placeholder="ID" required="" autofocus=""
+        .6u
+          input.text type="text" name="name" placeholder="Name" required=""
       .row.half
         .6u
           input.text type="password" name="pw" placeholder="Password" required=""
-      .row.half
         .6u
           input.text type="password" name="pw_confirm" placeholder="Password Confirm" required=""
       .row.half
         .6u
+          input.text type="text" name="sno" placeholder="Student No." required=""
+        .6u
+          input.text type="email" name="mail" placeholder="Recovery Email" required=""
+      .row.half
+        .6u
           input.text type="password" name="key" placeholder="Registeration Key" required=""
-      .row
-        .12u
+        .6u
           input.button type="submit" value="Register" 
 

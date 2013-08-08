@@ -2,16 +2,16 @@ article#recovery.panel
   header
     h2 Password Recovery
 
-  form#register action="" method="get" onsubmit="return forgotCheck(email)"
+  form#recovery action="" method="post" onsubmit="return recoveryCheck(email)"
     div
       .row.half
-        .6u
-          #login-data
+        .12u
+          .msg#recovery-data
 
       .row.half
         .6u
-          input.text type="text" name="email" placeholder="Recovery Email" required="" autofocus=""
+          input.text type="email" name="email" placeholder="Recovery Email" required="" autofocus=""
       .row
         .12u
-          input.button type="submit" value="Send Temporary Password" 
+          input.button type="submit" value="Send Password Token" 
 

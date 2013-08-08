@@ -70,6 +70,10 @@ html
         - if not session[:id]
           == slim :recovery
 
+        /! Password Reset
+        - if session[:token]
+          == slim :password_reset
+
 
       /! Footer
       #footer

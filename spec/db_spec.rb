@@ -1,5 +1,5 @@
 $:.unshift "."
-require 'pages/db'
+require 'lib/db'
 
 
 describe DB do
