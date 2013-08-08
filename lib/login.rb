@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'rubygems' if RUBY_VERSION < "1.9"
 require 'sinatra/base'
 require 'pony'
@@ -35,7 +36,7 @@ module Sinatra
             end
 
             app.post '/login' do
-                @db = DB.new $db_name
+                @db = settings.db
                 params[:ip] = request.ip
                 case @db.check_login params
                 when 1
@@ -52,8 +53,8 @@ module Sinatra
                 if params[:pw] != params[:pw_confirm]
                     "You must confirm your password correctly"
                 else
-                    if params[:key] == $key
-                        @db = DB.new $db_name
+                    if params[:key] == settings.key
+                        @db = settings.db
                         params[:ip] = request.ip
                         case @db.insert_user params
                         when 1
@@ -70,7 +71,7 @@ module Sinatra
             end
 
             app.post '/recovery' do
-                @db = DB.new $db_name
+                @db = settings.db
                 token = @db.check_mail params
                 case token
                 when 0
@@ -88,13 +89,12 @@ module Sinatra
             end
 
             app.get '/reset/:token/?' do
-                @db = DB.new $db_name
                 redirect '/' if authorized?
 
                 if params[:token].nil? || params[:token].empty?
                     redirect '/'
                 end
-
+                @db = settings.db
                 if @db.check_token(params) == 1
                     session[:token] = params[:token]
                     redirect '/#reset'
@@ -105,7 +105,7 @@ module Sinatra
 
             app.post '/reset' do
                 if params[:pw] == params[:pw_confirm] and session[:token]
-                    @db = DB.new $db_name
+                    @db = settings.db
                     params[:token] = session[:token]
                     case @db.reset_password params
                     when -1
@@ -114,6 +114,8 @@ module Sinatra
                         session[:token] = nil
                         "true"
                     end
+                else
+                    "You already used your token"
                 end
             end
         end

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 $:.unshift "."
 require 'lib/db'
 

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'sqlite3'
 require 'digest/sha1'
 
@@ -9,6 +10,9 @@ class DB
         @prob_table = "QUAL_PROB_TBL"
         @score_table = "QUAL_SCORE_TBL"
         @notice_table = "QUAL_NOTICE_TBL"
+        @secret = File.read("token_key").chomp
+
+        @db.execute "PRAGMA encoding = 'UTF-8';"
 
         @db.execute "
         CREATE TABLE IF NOT EXISTS '#{@user_table}' (
@@ -109,7 +113,7 @@ class DB
 
     protected
     def encrypt data
-        Digest::SHA1.hexdigest(data+$secret)
+        Digest::SHA1.hexdigest(data+@secret)
     end
 
     def check_params check, input
@@ -122,7 +126,7 @@ class DB
     end
 
     def new_token mail
-        token = encrypt(mail+Time.now.utc.to_s)
+        encrypt(mail+Time.now.utc.to_s).force_encoding("UTF-8")
     end
 
     public
@@ -165,13 +169,15 @@ class DB
     end
 
     def check_login args
+        p @db.execute("SELECT id, pw FROM #{@user_table}")
         check_args = [:id, :pw, :ip]
         return -1 if not check_params check_args, args
         return 0 if @db.execute("SELECT id FROM #{@user_table} WHERE id=:id AND pw=:pw",
                                 "id" => args[:id],
                                 "pw" => encrypt(args[:pw])).empty?
         @db.execute("UPDATE #{@user_table} SET lip=:ip WHERE id=:id",
-                                "ip" => args[:ip])
+                                "ip" => args[:ip],
+                                "id" => args[:id])
         return 1
     end
 
@@ -190,8 +196,7 @@ class DB
     def check_token args
         check_args = [:token]
         return -1 if not check_params check_args, args
-        p @db.execute("SELECT token FROM #{@user_table} WHERE token=:token",
-                                    "token" => args[:token])
+        token = @db.execute("SELECT token FROM #{@user_table}")[0][0]
         return 0 if @db.execute("SELECT mail FROM #{@user_table} WHERE token=:token",
                                                         "token" => args[:token]).empty?
         return 1
@@ -201,13 +206,12 @@ class DB
         check_args = [:token, :pw]
         return -1 if not check_params check_args, args
         p args
-        p args[:token]
-        p @db.execute("SELECT token FROM #{@user_table}")
-        p @db.execute("SELECT token FROM #{@user_table} WHERE token=:token",
-                                 "token" => args[:token])
-        @db.execute("UPDATE #{@user_table} SET pw=:pw and token=NULL WHERE token=:token",
-                                "pw" => args[:pw],
-                                "token" => args[:token].strip)
+        p encrypt(args[:pw])
+        @db.execute("UPDATE #{@user_table} SET pw=:pw WHERE token=:token",
+                                "pw" => encrypt(args[:pw]),
+                                "token" => args[:token])
+        @db.execute("UPDATE #{@user_table} SET token='' WHERE token=:token",
+                                "token" => args[:token])
         return 1
     end
 end
