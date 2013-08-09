@@ -10,7 +10,7 @@ class DB
         @prob_table = "QUAL_PROB_TBL"
         @score_table = "QUAL_SCORE_TBL"
         @notice_table = "QUAL_NOTICE_TBL"
-        @secret = File.read("token_key").chomp
+        @secret = YAML.load_file("config.yml")["token_key"].to_s
 
         @db.execute "PRAGMA encoding = 'UTF-8';"
 
@@ -169,7 +169,6 @@ class DB
     end
 
     def check_login args
-        p @db.execute("SELECT id, pw FROM #{@user_table}")
         check_args = [:id, :pw, :ip]
         return -1 if not check_params check_args, args
         return 0 if @db.execute("SELECT id FROM #{@user_table} WHERE id=:id AND pw=:pw",
@@ -205,8 +204,6 @@ class DB
     def reset_password args
         check_args = [:token, :pw]
         return -1 if not check_params check_args, args
-        p args
-        p encrypt(args[:pw])
         @db.execute("UPDATE #{@user_table} SET pw=:pw WHERE token=:token",
                                 "pw" => encrypt(args[:pw]),
                                 "token" => args[:token])

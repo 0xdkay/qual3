@@ -3,20 +3,18 @@ $:.unshift(".")
 require 'rubygems' if RUBY_VERSION < "1.9"
 require 'sinatra'
 require 'slim'
-require 'coffee_script'
+require 'yaml'
 
-#custom
 require 'libs'
 
 class Webserver < Sinatra::Base
     register Sinatra::SessionAuth
-
     configure do
-        set :key, File.read("register_key").chomp
-        set :db, DB.new(Dir.glob("*.db")[0])
-        set :sessions, true
-        set :show_exceptions, false
-        set :public_folder, File.dirname(__FILE__) + '/public'
+        config = YAML.load_file("config.yml")
+        config.each do |key, val|
+            set key, val
+        end
+        set :db, DB.new(settings.dbname)
     end
   #set :static, true
 =begin
@@ -34,7 +32,14 @@ class Webserver < Sinatra::Base
     end
 
     post '/email' do
-        "Email posted"
+        if authorized?
+            Pony.mail(
+                :to => settings.email,
+                :from => params[:email],
+                :subject => "#{settings.name} - #{params[:subject]}",
+                :body => params[:message]+"\n\nby #{params[:name]}")
+        end
+        redirect '/'
     end
 
     get '/*' do

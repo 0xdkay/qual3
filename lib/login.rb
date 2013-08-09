@@ -53,7 +53,7 @@ module Sinatra
                 if params[:pw] != params[:pw_confirm]
                     "You must confirm your password correctly"
                 else
-                    if params[:key] == settings.key
+                    if params[:key] == settings.register_key
                         @db = settings.db
                         params[:ip] = request.ip
                         case @db.insert_user params

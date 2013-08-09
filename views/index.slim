@@ -16,9 +16,9 @@ html
       link href="css/noscript.css" rel="stylesheet"
     /![if lte IE 8] <script src="js/html5shiv.js"></script><link rel="stylesheet" href="css/ie8.css" />
   body.homepage
-    - if session[:id]
+    - if authorized?
       #welcome
-        | Welcome! #{session[:id]}
+        | Welcome! #{authorized?}
 
     /! Wrapper
     #wrapper
@@ -32,9 +32,10 @@ html
           span Rules
         a.icon.icon-folder-close href="#chal"
           span Challenge
-        a.icon.icon-envelope href="#email"
-          span Contact Us
-        - if session[:id]
+        - if authorized?
+          a.icon.icon-envelope href="#email"
+            span Contact
+        - if authorized?
           a.icon.icon-signout href="/logout"
             span Logout
         - else
@@ -56,18 +57,19 @@ html
         == slim :chal
 
         /! Email
-        == slim :email
+        - if authorized?
+          == slim :email
 
         /! Login
-        - if not session[:id]
+        - if not authorized?
           == slim :login
 
         /! Register
-        - if not session[:id]
+        - if not authorized?
           == slim :register
 
         /! Forgot Password
-        - if not session[:id]
+        - if not authorized?
           == slim :recovery
 
         /! Password Reset
