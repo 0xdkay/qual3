@@ -92,16 +92,41 @@ function showProb(pno)
             $('#showprob-data').html(data);
             $('#showprob-data').css("color","red");
         } else {
+            $('#showprob-data').hide();
             var prob = $.parseJSON(data);
             $('#prob_name').html(prob.name + " - " + prob.title + " (solved by " + prob.solved + ")");
+            $('input[name="pno"]').val(prob.pno);
             $('#prob_body').html(prob.body);
-            $('#prob_file').html(prob.file);
-            $('#prob_file').click(function(e) {
-                e.preventDefault();
-                window.location.href="download/"+prob.category+"/"+prob.file;
-            });
+            if(prob.file) {
+                $('#prob_file').show();
+                $('#prob_file').html(prob.file);
+                $('#prob_file').click(function(e) {
+                    e.preventDefault();
+                    window.location.href="download/"+prob.category+"/"+prob.file;
+                });
+            } else {
+                $('#prob_file').hide();
+            }
+
             location.href="#show_problem"
         }
     });
+}
+
+function checkAuth(pno, auth)
+{
+    $.post('chal/auth', {
+        'pno' : pno.value,
+        'auth' : auth.value
+    }, function(data) {
+        $('#showprob-data').show();
+        $('#showprob-data').html(data);
+        if(data=='true') {
+            $('#showprob-data').addClass('.green');
+        } else {
+            $('#showprob-data').addClass('.red');
+        }
+    });
+    return false;
 }
 

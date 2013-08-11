@@ -2,10 +2,10 @@ article#show_problem.panel
   header
     h2 
       #prob_name
-  form
+  form action="" method="post" onsubmit="return checkAuth(pno,auth);"
+    input type="hidden" name="pno"
     .row.half
-      .12u
-        .msg#showprob-data
+      .12u#showprob-data
 
     .row
       .12u#prob_body
@@ -13,6 +13,6 @@ article#show_problem.panel
       .12u#prob_file title="download"
     .row.half
       .6u
-        input.text#authkey name="auth" placeholder="Auth Key" type="text" required="" autofocus=""
+        input.text name="auth" placeholder="Auth Key" type="text" required="" autofocus=""
       .6u
         input.button type="submit" value="Auth"

@@ -33,6 +33,7 @@ module Sinatra
                     @db = settings.db
                     prob = @db.show_prob params
                     {
+                        :pno => prob[0],
                         :name => prob[1][0..2].upcase + prob[6].to_s,
                         :category => prob[1],
                         :title => prob[2],
@@ -41,6 +42,23 @@ module Sinatra
                         :file => prob[7],
                         :solved => prob[10]? prob[10]: 0
                     }.to_json
+                end
+            end
+
+            app.post '/chal/auth' do
+                if authorized?
+                    params[:id] = session[:id]
+                    @db = settings.db
+                    case @db.check_auth params
+                    when -1
+                        "You must fill all the data"
+                    when 2
+                        "You already solved"
+                    when 0
+                        "Key doesn't match"
+                    when 1
+                        "true"
+                    end
                 end
             end
 

@@ -236,6 +236,21 @@ class DB
                                 ORDER BY t1.score",
                              "pno" => args[:pno])[0]
     end
+
+    def check_auth args
+        check_args = [:pno, :auth, :id]
+        return -1 if not check_params check_args, args
+        return 2 if not @db.execute("SELECT pno FROM #{@score_table} WHERE pno=:pno and id=:id",
+                                                     "pno" => args[:pno],
+                                                     "id" => args[:id]).empty?
+        return 0 if @db.execute("SELECT pno FROM #{@prob_table} WHERE pno=:pno and auth=:auth",
+                                "pno" => args[:pno],
+                                "auth" => args[:auth]).empty?
+        @db.execute("INSERT INTO #{@score_table} (pno, id) VALUES (:pno, :id)",
+                                 "pno" => args[:pno],
+                                 "id" => args[:id])
+        return 1
+    end
 end
 
 
