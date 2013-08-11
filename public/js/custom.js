@@ -82,3 +82,26 @@ function registerCheck(form)
     return false;
 }
 
+function showProb(pno)
+{
+
+    $.post('chal/show', {
+        'pno' : pno
+    }, function(data) {
+        if(data=='wrong') {
+            $('#showprob-data').html(data);
+            $('#showprob-data').css("color","red");
+        } else {
+            var prob = $.parseJSON(data);
+            $('#prob_name').html(prob.name + " - " + prob.title + " (solved by " + prob.solved + ")");
+            $('#prob_body').html(prob.body);
+            $('#prob_file').html(prob.file);
+            $('#prob_file').click(function(e) {
+                e.preventDefault();
+                window.location.href="download/"+prob.category+"/"+prob.file;
+            });
+            location.href="#show_problem"
+        }
+    });
+}
+

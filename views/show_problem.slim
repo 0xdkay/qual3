@@ -1,0 +1,18 @@
+article#show_problem.panel
+  header
+    h2 
+      #prob_name
+  form
+    .row.half
+      .12u
+        .msg#showprob-data
+
+    .row
+      .12u#prob_body
+    .row
+      .12u#prob_file title="download"
+    .row.half
+      .6u
+        input.text#authkey name="auth" placeholder="Auth Key" type="text" required="" autofocus=""
+      .6u
+        input.button type="submit" value="Auth"

@@ -7,8 +7,22 @@ require 'yaml'
 
 require 'libs'
 
+require 'rack/deflater'
+require 'webrick'
+require 'webrick/https'
+require 'openssl'
+
+class Array
+    def safe_transpose
+        max_size = self.map(&:size).max
+        self.dup.map{|r| r << nil while r.size < max_size; r}.transpose
+    end
+end
+
 class Webserver < Sinatra::Base
+    use Rack::Deflater
     register Sinatra::SessionAuth
+    register Sinatra::Challenge
     configure do
         config = YAML.load_file("config.yml")
         config.each do |key, val|
@@ -24,11 +38,26 @@ class Webserver < Sinatra::Base
 =end
 
     get '/' do 
-        slim :index
-    end
-
-    get '/chal' do
-        slim :index
+        if authorized?
+            @db = settings.db
+            prob_list = @db.get_probs
+            probs = Array.new(settings.category.size){Array.new}
+            settings.category.each.with_index do |category, index|
+                prob_list.each do |prob|
+                    if prob[1] == category
+                        if probs[index]
+                            probs[index] += [prob]
+                        else
+                            probs[index] = [prob]
+                        end
+                    end
+                end
+            end
+            probs = probs.safe_transpose
+            slim :index, :locals => {:probs => probs}
+        else
+            slim :index
+        end
     end
 
     post '/email' do
@@ -43,6 +72,7 @@ class Webserver < Sinatra::Base
     end
 
     get '/*' do
-        "page not found"
+        redirect '/'
     end
 end
+

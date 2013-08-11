@@ -1,0 +1,36 @@
+article#new_problem.panel
+  header
+    h2 New Problem
+  form#new_problem action="chal/new" method="post" enctype="multipart/form-data"
+    div
+      .row.half
+        .12u
+          .msg#newprob-data
+
+      .row.half
+        .6u
+          select name="category"
+            - for category in settings.category
+              option value="#{category}"
+                | #{category.capitalize}
+        .6u style="margin-top:10px; text-align: center;"
+          | #{Time.now}
+      .row.half
+        .6u
+          input.text name="title" placeholder="Problem Name" type="text" required=""
+        .6u
+          input.text name="author" placeholder="author" type="text" required=""
+      .row.half
+        .12u
+          textarea name="body" placeholder="Problem Description"
+      .row.half
+        .6u
+          input.text name="auth" placeholder="Auth Key" type="text" required=""
+        .6u
+          input.text name="score" placeholder="Score" type="text" required=""
+      .row.half
+        .12u
+          input.text name="file" type="file"
+      .row
+        .12u
+          input.button type="submit" value="Create Problem"

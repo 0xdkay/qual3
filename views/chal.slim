@@ -1,25 +1,23 @@
 article#chal.panel
-  
   header
     h2 Problems
-  - if session[:id]
-    p
-      | Enjoy your problem!
-    section.is-gallery
-      .row.half
-        .2u
-          a.image.image-full href="http://flypixel.com/knob/3495684098026313"
-            img alt="" src="images/1.jpg"
-        .4u
-          a.image.image-full href="http://flypixel.com/knob/3495684098026313"
-            img alt="" src="images/1.jpg"
-        .4u
-          a.image.image-full href="http://flypixel.com/contact-login-form/8829734266026310"
-            img alt="" src="images/2.jpg"
-        .4u
-          a.image.image-full href="http://flypixel.com/wallpaper-pack/3755398966026313"
-            img alt="" src="images/3.jpg"
-  - else
-    p
-      span.red
-        | You must login first
+    span.byline Enjoy the problems!
+  table.prob
+    tr.prob_title
+      - for category in settings.category
+        th.prob
+          | #{category.capitalize}
+
+    - probs.each do |prob_line|
+      tr.probs
+        - prob_line.each do |prob|
+          - if prob
+            td.prob onclick="showProb(#{prob[0]})" title="solved by #{prob[3]? prob[3]:0}"
+              | #{prob[1][0..2].upcase+prob[2].to_s}
+          - else
+            td
+
+  - if admin?
+    .row
+      .12u
+        input.button type="button" value="New Problem" onclick="location.href='#new_problem'"

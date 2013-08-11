@@ -101,7 +101,8 @@
 
     h1, h2, h3, h4,h5, h6
     {
-        font-weight: 400;
+        font-family: "Open Sans", "Verdana";
+        font-weight: 700;
         color: #363636;
     }
     
@@ -268,10 +269,69 @@
       word-break: keep-all;
     }
 
+    article#home span#main_desc
+        {
+            font-weight: 500;
+        }
+
     article#rule
     {
       font-family: "Nanum";
     }
+
+
+    article#chal table.prob
+        {
+            table-layout: fixed;
+            text-align: center;
+            border-collapse: separate;
+            border-spacing: .5em 0.25em;
+        }
+        
+            article#chal table.prob tr.prob_title th.prob
+            {
+                margin: 0;
+                padding: 0;
+                width: 120px;
+                font-family: "Open Sans", "Verdana";
+                line-height: 1.4em;
+                font-weight: 600;
+            }
+
+            article#chal table.prob tr.probs
+            {
+            }
+
+            article#chal table.prob tr.probs td.prob
+            {
+                margin: 0;
+                padding: 0;
+                font-family: "PT Mono", "Courier New";
+                font-weight: bold;
+/*				background: #00003e;*/
+                background: #3eceb9;
+                color: #eee;
+                cursor: pointer;
+            }
+
+            article#chal table.prob tr.probs td.prob:hover
+            {
+                background: #66669e;
+            }
+
+        article#show_problem
+        {
+        }
+            article#show_problem #prob_file
+            {
+                cursor: pointer;
+            }
+
+            article#show_problem #prob_file:hover
+            {
+                color: #ff0000;
+            }
+
 
     .image
     {
@@ -880,7 +940,7 @@
     
         #footer a
         {
-            color: #ddd;
+            col7r: #ddd;
             color: rgba(255,255,255,0.65);
             -moz-transition: color .25s ease-in-out;
             -webkit-transition: color .25s ease-in-out;

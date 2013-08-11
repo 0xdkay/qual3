@@ -32,6 +32,7 @@ class DB
 
         @db.execute "
         CREATE TABLE IF NOT EXISTS '#{@prob_table}' (
+            'pno' integer PRIMARY KEY AUTOINCREMENT,
             'category' varchar(50) NOT NULL,
             'title' varchar(50) NOT NULL,
             'author' varchar(50) NOT NULL,
@@ -40,30 +41,28 @@ class DB
             'score' integer NOT NULL,
             'file' varchar(50) DEFAULT NULL,
             'date' timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-            'ldate' timestamp DEFAULT NULL,
-            PRIMARY KEY ('title')
+            'ldate' timestamp DEFAULT NULL
         )
         "
 
         @db.execute "
             CREATE TABLE IF NOT EXISTS '#{@notice_table}' (
-                'no' integer AUTO_INCREMENT,
+                'no' integer PRIMARY KEY AUTOINCREMENT,
                 'title' varchar(50) NOT NULL,
                 'author' varchar(50) NOT NULL,
                 'body' text,
                 'file' varchar(50) DEFAULT NULL,
                 'date' timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-                'ldate' timestamp DEFAULT NULL,
-                PRIMARY KEY ('no')
+                'ldate' timestamp DEFAULT NULL
             )
         "
 
         @db.execute "
         CREATE TABLE IF NOT EXISTS '#{@score_table}' (
-            'title' integer NOT NULL,
+            'pno' integer NOT NULL,
             'id' varchar(50) NOT NULL,
             'date' timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY ('title','id')
+            PRIMARY KEY ('pno','id')
         )
         "
 
@@ -83,7 +82,7 @@ class DB
         ON #{@prob_table}
         FOR EACH ROW
         BEGIN
-        UPDATE #{@prob_table} SET ldate = CURRENT_TIMESTAMP WHERE title=old.title;
+        UPDATE #{@prob_table} SET ldate = CURRENT_TIMESTAMP WHERE pno=old.pno;
         END
         "
 
@@ -104,7 +103,7 @@ class DB
         ON #{@score_table}
         FOR EACH ROW
         BEGIN
-        UPDATE #{@score_table} SET date = CURRENT_TIMESTAMP WHERE title=old.title and id=old.id;
+        UPDATE #{@score_table} SET date = CURRENT_TIMESTAMP WHERE pno=old.pno and id=old.id;
         END
         "
 
@@ -129,6 +128,10 @@ class DB
         encrypt(mail+Time.now.utc.to_s).force_encoding("UTF-8")
     end
 
+    def get_date 
+        Time.now.strftime("%Y-%m-%d %H:%M:%S")
+    end
+
     public
 
     def insert_user args
@@ -146,26 +149,28 @@ class DB
                                 "name" => args[:name],
                                 "sno" => args[:sno],
                                 "mail" => args[:mail],
-                                "date" => Time.now.strftime("%Y-%m-%d %H:%M:%S"),
+                                "date" => get_date,
                                 "ip" => args[:ip])
     end
 
     def insert_prob args
         check_args = [:category, :title, :author, :body, :auth, :score]
         return -1 if not check_params check_args, args
-        return 0 if not @db.execute("SELECT title FROM #{@prob_table} WHERE title=:title",
-                                                                        "title" => args[:title]).empty?
+        if args[:file] and args[:file][:filename]
+            file = args[:file][:filename]
+        else
+            file = ""
+        end
         return 1 if @db.execute("INSERT INTO #{@prob_table} (category, title, author, body, auth, score, file, date)
-                                    SELECT :category, :title, :author, :body, :auth, :score, :file, :date
-                                WHERE NOT EXISTS (SELECT title FROM #{@prob_table} WHERE title=:title);",
+                                    VALUES (:category, :title, :author, :body, :auth, :score, :file, :date)",
                                 "category" => args[:category],
                                 "title" => args[:title],
                                 "author" => args[:author],
                                 "body" => args[:body],
                                 "auth" => args[:auth],
                                 "score" => args[:score],
-                                "file" => args[:file],
-                                "date" => Time.now.strftime("%Y-%m-%d %H:%M:%S"))
+                                "file" => file,
+                                "date" => get_date)
     end
 
     def check_login args
@@ -210,6 +215,26 @@ class DB
         @db.execute("UPDATE #{@user_table} SET token='' WHERE token=:token",
                                 "token" => args[:token])
         return 1
+    end
+
+    def get_probs
+        @db.execute("SELECT t1.pno, t1.category, t1.score, t2.solved FROM #{@prob_table} t1
+                                LEFT JOIN
+                                    (SELECT pno, count(*) as solved FROM #{@score_table} GROUP BY pno) t2
+                                ON t1.pno = t2.pno
+                                ORDER BY t1.score")
+    end
+
+    def show_prob args
+        check_args = [:pno]
+        return -1 if not check_params check_args, args
+        @db.execute("SELECT *, t2.solved FROM #{@prob_table} t1
+                                LEFT JOIN
+                                    (SELECT pno, count(*) as solved FROM #{@score_table} GROUP BY pno) t2
+                                ON t1.pno = t2.pno
+                                WHERE t1.pno = :pno
+                                ORDER BY t1.score",
+                             "pno" => args[:pno])[0]
     end
 end
 

@@ -5,8 +5,14 @@ article#home.panel
       sup
         span style="font-size: 25px"
           | rd
-    span.byline Qualification Test for GoN Newbies
-  a.jumplink.pic href="#chal"
-    span.jumplink.arrow.icon.icon-chevron-right
-      span Go to Challenge
-    img alt="" src="http://gon.kaist.ac.kr/gonhacker.png"
+    span.byline#main_desc Qualification Test for GoN Newbies
+  - if authorized?
+    a.jumplink.pic href="#chal"
+      span.jumplink.arrow.icon.icon-chevron-right
+        span Go to Challenge
+      img alt="" src="http://gon.kaist.ac.kr/gonhacker.png"
+  - else
+    a.jumplink.pic href="#login"
+      span.jumplink.arrow.icon.icon-chevron-right
+        span Go to Challenge
+      img alt="" src="http://gon.kaist.ac.kr/gonhacker.png"

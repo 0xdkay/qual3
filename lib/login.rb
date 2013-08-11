@@ -14,6 +14,10 @@ module Sinatra
                 redirect '/login' unless authorized?
             end
 
+            def admin?
+                session[:id] == settings.admin
+            end
+
             def logout!
                 session[:id] = nil
             end

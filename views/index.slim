@@ -30,12 +30,11 @@ html
           span Notice
         a.icon.icon-check href="#rule"
           span Rules
-        a.icon.icon-folder-close href="#chal"
-          span Challenge
         - if authorized?
+          a.icon.icon-folder-close href="#chal"
+            span Challenge
           a.icon.icon-envelope href="#email"
             span Contact
-        - if authorized?
           a.icon.icon-signout href="/logout"
             span Logout
         - else
@@ -53,8 +52,18 @@ html
         /! Rules
         == slim :rule
 
+
         /! Chal
-        == slim :chal
+        - if authorized?
+          == slim :chal, :locals => {:probs => probs}
+
+        /! Chal Show Problem
+        - if authorized?
+          == slim :show_problem
+
+        /! Chal New Problem
+        - if authorized? and admin?
+          == slim :new_problem
 
         /! Email
         - if authorized?
