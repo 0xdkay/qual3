@@ -2,17 +2,25 @@ article#show_problem.panel
   header
     h2 
       #prob_name
-  form action="" method="post" onsubmit="return checkAuth(pno,auth);"
+  form#showprob name='probform' action="" method="post" onsubmit="return checkAuth(pno,auth);"
     input type="hidden" name="pno"
     .row.half
       .12u#showprob-data
 
     .row
-      .12u#prob_body
+      .12u#probbody
+        textarea#prob_body readonly=""
     .row
-      .12u#prob_file title="download"
+      .12u#probfile
+        input.text#prob_file title="download" readonly=""
     .row.half
-      .6u
+      .10u#authkey
         input.text name="auth" placeholder="Auth Key" type="text" required="" autofocus=""
-      .6u
+      .2u#authbutton
         input.button type="submit" value="Auth"
+
+    - if admin?
+      .row.half
+        .12u.right
+          input.button type="button" onclick="modifyProb(probform)" value="Modify"
+          input.button type="button" onclick="deleteProb(pno);" value="Delete"

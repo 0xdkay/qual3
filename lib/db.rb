@@ -157,6 +157,11 @@ class DB
         check_args = [:category, :title, :author, :body, :auth, :score]
         return -1 if not check_params check_args, args
         if args[:file] and args[:file][:filename]
+            if args[:file] and args[:file][:tempfile] and args[:file][:filename]
+                File.open('uploads/' + args[:category] + "/" + args[:file][:filename], "w") do |f|
+                    f.write(args['file'][:tempfile].read)
+                end
+            end
             file = args[:file][:filename]
         else
             file = ""
@@ -171,6 +176,17 @@ class DB
                                 "score" => args[:score],
                                 "file" => file,
                                 "date" => get_date)
+    end
+
+    def delete_prob args
+        check_args = [:pno]
+        return -1 if not check_params check_args, args
+        res = @db.execute("SELECT pno, category, file FROM #{@prob_table} WHERE pno=:pno",
+                                            "pno" => args[:pno])[0]
+        return 0 if res.empty?
+        File.delete("uploads/#{res[1]}/#{res[2]}") if not res[2].empty?
+        return 1 if @db.execute("DELETE FROM #{@prob_table} WHERE pno=:pno",
+                                                     "pno" => args[:pno])
     end
 
     def check_login args
@@ -228,7 +244,7 @@ class DB
     def show_prob args
         check_args = [:pno]
         return -1 if not check_params check_args, args
-        @db.execute("SELECT *, t2.solved FROM #{@prob_table} t1
+        @db.execute("SELECT t1.*, t2.solved FROM #{@prob_table} t1
                                 LEFT JOIN
                                     (SELECT pno, count(*) as solved FROM #{@score_table} GROUP BY pno) t2
                                 ON t1.pno = t2.pno

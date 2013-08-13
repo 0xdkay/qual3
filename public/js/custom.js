@@ -99,7 +99,7 @@ function showProb(pno)
             $('#prob_body').html(prob.body);
             if(prob.file) {
                 $('#prob_file').show();
-                $('#prob_file').html(prob.file);
+                $('#prob_file').val(prob.file);
                 $('#prob_file').click(function(e) {
                     e.preventDefault();
                     window.location.href="download/"+prob.category+"/"+prob.file;
@@ -107,7 +107,6 @@ function showProb(pno)
             } else {
                 $('#prob_file').hide();
             }
-
             location.href="#show_problem"
         }
     });
@@ -122,11 +121,37 @@ function checkAuth(pno, auth)
         $('#showprob-data').show();
         $('#showprob-data').html(data);
         if(data=='true') {
-            $('#showprob-data').addClass('.green');
+            $('#showprob-data').css("color", "green");
         } else {
-            $('#showprob-data').addClass('.red');
+            $('#showprob-data').css("color", "red");
         }
     });
     return false;
 }
+
+function modifyProb(form)
+{
+    alert(form.pno.value);
+}
+
+function deleteProb(pno)
+{
+    if (confirm("Do you really want to delete?") == true){    //확인
+        $.post('chal/delete', {
+            'pno' : pno.value
+        }, function(data) {
+            if(data=='true') {
+                window.location.hash = "#chal";
+                location.reload();
+            } else {
+                $('#showprob-data').show();
+                $('#showprob-data').html(data);
+                $('#showprob-data').css("color", "red");
+            }
+        });
+    } else {   //취소
+            return;
+    }
+}
+
 

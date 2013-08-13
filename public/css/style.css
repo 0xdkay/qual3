@@ -26,6 +26,17 @@
 /*********************************************************************************/
 /* Basic                                                                         */
 /*********************************************************************************/
+
+    .row.right
+    {
+        float: right;
+    }
+
+    .right
+    {
+        text-align: right;
+    }
+
   span.red
   {
     color: red;
@@ -312,6 +323,7 @@
                 background: #3eceb9;
                 color: #eee;
                 cursor: pointer;
+                overflow: hidden;
             }
 
             article#chal table.prob tr.probs td.prob:hover
@@ -322,6 +334,26 @@
         article#show_problem
         {
         }
+            article#show_problem #showprob-data
+            {
+                padding-top: 0;
+            }
+
+            article#show_problem #probbody
+            {
+                padding-top: 0;
+            }
+            
+            article#show_problem #prob_body
+            {
+                height: 13em;
+            }
+
+            article#show_problem #probfile
+            {
+                padding-top: 10px;
+            }
+
             article#show_problem #prob_file
             {
                 cursor: pointer;
@@ -329,7 +361,19 @@
 
             article#show_problem #prob_file:hover
             {
-                color: #ff0000;
+                color: #00ff00;
+            }
+
+            article#show_problem #authkey
+            {
+                padding-top: 10px;
+            }
+
+            article#show_problem #authbutton
+            {
+                text-align: right;
+                padding: 0;
+                padding-top: 10px;
             }
 
 

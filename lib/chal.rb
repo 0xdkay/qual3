@@ -13,11 +13,6 @@ module Sinatra
 
             app.post '/chal/new' do
                 if authorized? and admin?
-                    if params[:file] and params[:file][:tempfile] and params[:file][:filename]
-                        File.open('uploads/' + params[:category] + "/" + params[:file][:filename], "w") do |f|
-                            f.write(params['file'][:tempfile].read)
-                        end
-                    end
                     @db = settings.db
                     if @db.insert_prob(params) == 1
                         "true"
@@ -67,6 +62,20 @@ module Sinatra
                     send_file "uploads/#{params[:category]}/#{params[:filename]}", 
                                         :filename => params[:filename], 
                                         :type => 'Application/octet-stream'
+                end
+            end
+
+            app.post '/chal/delete' do
+                if authorized? and admin?
+                    @db = settings.db
+                    case @db.delete_prob params
+                    when 1
+                        "true"
+                    when 0
+                        "That problem doesn't exist"
+                    when -1
+                        "You must fill all the data"
+                    end
                 end
             end
         end
