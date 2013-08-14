@@ -27,16 +27,20 @@ module Sinatra
                 if authorized?
                     @db = settings.db
                     prob = @db.show_prob params
-                    {
-                        :pno => prob[0],
-                        :name => prob[1][0..2].upcase + prob[6].to_s,
-                        :category => prob[1],
-                        :title => prob[2],
-                        :author => prob[3],
-                        :body => prob[4],
-                        :file => prob[7],
-                        :solved => prob[10]? prob[10]: 0
-                    }.to_json
+                    if prob == -1
+                        "You must fill all the data"
+                    else
+                        {
+                            :pno => prob[0],
+                            :name => prob[1][0..2].upcase + prob[6].to_s,
+                            :category => prob[1],
+                            :title => prob[2],
+                            :author => prob[3],
+                            :body => prob[4],
+                            :file => prob[7],
+                            :solved => prob[10]? prob[10]: 0
+                        }.to_json
+                    end
                 end
             end
 
@@ -73,6 +77,57 @@ module Sinatra
                         "true"
                     when 0
                         "That problem doesn't exist"
+                    when -1
+                        "You must fill all the data"
+                    end
+                end
+            end
+
+            app.post '/chal/modify' do
+                if authorized? and admin?
+                    @db = settings.db
+                    case @db.modify_prob params
+                    when 1
+                        redirect '/#chal'
+                    when 0
+                        "Problem doesn't exist"
+                    when -1
+                        "You must fill all the data"
+                    end
+                end
+            end
+
+            app.get '/chal/modify/:pno' do
+                if authorized? and admin?
+                    @db = settings.db
+                    prob = @db.show_prob params
+                    if prob == -1
+                        "You must fill all the data"
+                    else
+                        {
+                            :pno => prob[0],
+                            :category => prob[1],
+                            :title => prob[2],
+                            :author => prob[3],
+                            :body => prob[4],
+                            :auth => prob[5],
+                            :score => prob[6],
+                            :file => prob[7],
+                            :date => prob[8],
+                            :ldate => prob[9]
+                        }.to_json
+                    end
+                end
+            end
+
+            app.post '/chal/delete_file' do
+                if authorized? and admin?
+                    @db = settings.db
+                    case @db.file_delete params
+                    when 1
+                        "true"
+                    when 0
+                        "No file exists"
                     when -1
                         "You must fill all the data"
                     end

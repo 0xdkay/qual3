@@ -319,8 +319,7 @@
                 padding: 0;
                 font-family: "PT Mono", "Courier New";
                 font-weight: bold;
-/*				background: #00003e;*/
-                background: #3eceb9;
+                background: #ffc123;
                 color: #eee;
                 cursor: pointer;
                 overflow: hidden;
@@ -328,7 +327,7 @@
 
             article#chal table.prob tr.probs td.prob:hover
             {
-                background: #66669e;
+                background: #ff723c;
             }
 
         article#show_problem

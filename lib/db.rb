@@ -132,6 +132,18 @@ class DB
         Time.now.strftime("%Y-%m-%d %H:%M:%S")
     end
 
+    def create_file args
+        if args[:file][:tempfile] and args[:file][:filename]
+            File.open('uploads/' + args[:category] + "/" + args[:file][:filename], "w") do |f|
+                f.write(args['file'][:tempfile].read)
+            end
+        end
+    end
+
+    def delete_file res
+        File.delete("uploads/#{res[1]}/#{res[2]}") if not res[2].empty?
+    end
+
     public
 
     def insert_user args
@@ -156,12 +168,9 @@ class DB
     def insert_prob args
         check_args = [:category, :title, :author, :body, :auth, :score]
         return -1 if not check_params check_args, args
-        if args[:file] and args[:file][:filename]
-            if args[:file] and args[:file][:tempfile] and args[:file][:filename]
-                File.open('uploads/' + args[:category] + "/" + args[:file][:filename], "w") do |f|
-                    f.write(args['file'][:tempfile].read)
-                end
-            end
+        if args[:file]
+            args[:file][:filename] = Digest::SHA1.hexdigest(args[:file][:filename])
+            create_file args
             file = args[:file][:filename]
         else
             file = ""
@@ -178,15 +187,56 @@ class DB
                                 "date" => get_date)
     end
 
+    def modify_prob args
+        check_args = [:pno, :category, :title, :author, :body, :auth, :score]
+        return -1 if not check_params check_args, args
+        res = @db.execute("SELECT pno, category, file FROM #{@prob_table} WHERE pno=:pno",
+                                         "pno" => args[:pno])[0]
+        return 0 if not res
+        if args[:file]
+            args[:file][:filename] = Digest::SHA1.hexdigest(args[:file][:filename])
+            if args[:file][:filename] != res[2]
+                delete_file res
+                create_file args
+            end
+            file = args[:file][:filename]
+        else
+            file = ""
+        end
+        return 1 if @db.execute("UPDATE #{@prob_table} 
+                                                        SET category=:category, title=:title, author=:author, 
+                                                                body=:body, auth=:auth, score=:score, file=:file
+                                                        WHERE pno=:pno",
+                                                        "pno" => args[:pno],
+                                                        "category" => args[:category],
+                                                        "title" => args[:title],
+                                                        "author" => args[:author],
+                                                        "body" => args[:body],
+                                                        "auth" => args[:auth],
+                                                        "score" => args[:score],
+                                                        "file" => file)
+    end
+
     def delete_prob args
         check_args = [:pno]
         return -1 if not check_params check_args, args
         res = @db.execute("SELECT pno, category, file FROM #{@prob_table} WHERE pno=:pno",
                                             "pno" => args[:pno])[0]
         return 0 if res.empty?
-        File.delete("uploads/#{res[1]}/#{res[2]}") if not res[2].empty?
+        delete_file res
         return 1 if @db.execute("DELETE FROM #{@prob_table} WHERE pno=:pno",
                                                      "pno" => args[:pno])
+    end
+
+    def file_delete args
+        check_args = [:pno]
+        return -1 if not check_params check_args, args
+        res = @db.execute("SELECT pno, category, file FROM #{@prob_table} WHERE pno=:pno",
+                                            "pno" => args[:pno])[0]
+        return 0 if res.empty? or res[2].empty?
+        delete_file res
+        return 1 if @db.execute("UPDATE #{@prob_table} SET file='' WHERE pno=:pno",
+                                                        "pno" => args[:pno])
     end
 
     def check_login args
@@ -225,15 +275,14 @@ class DB
     def reset_password args
         check_args = [:token, :pw]
         return -1 if not check_params check_args, args
-        @db.execute("UPDATE #{@user_table} SET pw=:pw WHERE token=:token",
+        @db.execute("UPDATE #{@user_table} SET pw=:pw, token='' WHERE token=:token",
                                 "pw" => encrypt(args[:pw]),
-                                "token" => args[:token])
-        @db.execute("UPDATE #{@user_table} SET token='' WHERE token=:token",
                                 "token" => args[:token])
         return 1
     end
 
     def get_probs
+        require 'pp'
         @db.execute("SELECT t1.pno, t1.category, t1.score, t2.solved FROM #{@prob_table} t1
                                 LEFT JOIN
                                     (SELECT pno, count(*) as solved FROM #{@score_table} GROUP BY pno) t2

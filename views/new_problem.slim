@@ -4,8 +4,7 @@ article#new_problem.panel
   form#new_problem action="chal/new" method="post" enctype="multipart/form-data"
     div
       .row.half
-        .12u
-          .msg#newprob-data
+        .12u#newprob-data
 
       .row.half
         .6u
@@ -13,7 +12,7 @@ article#new_problem.panel
             - for category in settings.category
               option value="#{category}"
                 | #{category.capitalize}
-        .6u style="margin-top:10px; text-align: center;"
+        .6u style="text-align: center;"
           | #{Time.now}
       .row.half
         .6u
@@ -25,12 +24,12 @@ article#new_problem.panel
           textarea name="body" placeholder="Problem Description"
       .row.half
         .6u
-          input.text name="auth" placeholder="Auth Key" type="text" required=""
+          input.text name="auth" placeholder="Auth Key" type="password" required=""
         .6u
           input.text name="score" placeholder="Score" type="text" required=""
       .row.half
         .12u
-          input.text name="file" type="file"
+          input.text name="file" type="file" 
       .row
         .12u
           input.button type="submit" value="Create Problem"

@@ -15,12 +15,12 @@ article#show_problem.panel
         input.text#prob_file title="download" readonly=""
     .row.half
       .10u#authkey
-        input.text name="auth" placeholder="Auth Key" type="text" required="" autofocus=""
+        input.text name="auth" placeholder="Auth Key" type="password" required="" autofocus=""
       .2u#authbutton
         input.button type="submit" value="Auth"
 
     - if admin?
       .row.half
         .12u.right
-          input.button type="button" onclick="modifyProb(probform)" value="Modify"
+          input.button type="button" onclick="modifyProb(pno)" value="Modify"
           input.button type="button" onclick="deleteProb(pno);" value="Delete"

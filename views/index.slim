@@ -65,6 +65,10 @@ html
         - if authorized? and admin?
           == slim :new_problem
 
+        /! Chal Modify Problem
+        - if authorized? and admin?
+          == slim :modify_problem
+
         /! Email
         - if authorized?
           == slim :email

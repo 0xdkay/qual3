@@ -84,7 +84,6 @@ function registerCheck(form)
 
 function showProb(pno)
 {
-
     $.post('chal/show', {
         'pno' : pno
     }, function(data) {
@@ -97,6 +96,7 @@ function showProb(pno)
             $('#prob_name').html(prob.name + " - " + prob.title + " (solved by " + prob.solved + ")");
             $('input[name="pno"]').val(prob.pno);
             $('#prob_body').html(prob.body);
+            $('input[name="auth"]').val("");
             if(prob.file) {
                 $('#prob_file').show();
                 $('#prob_file').val(prob.file);
@@ -129,9 +129,32 @@ function checkAuth(pno, auth)
     return false;
 }
 
-function modifyProb(form)
+function modifyProb(pno)
 {
-    alert(form.pno.value);
+    $.get('chal/modify/'+pno.value, function(data) {
+        if(data=='wrong') {
+            $('#modifyprob-data').html(data);
+            $('#modifyprob-data').css("color","red");
+        } else {
+            $('#modifyprob-data').hide();
+            var prob = $.parseJSON(data);
+            $('#mod_pno').val(prob.pno);
+            $('#mod_category').val(prob.category);
+            $('#mod_title').val(prob.title);
+            $('#mod_author').val(prob.author);
+            $('#mod_body').val(prob.body);
+            $('#mod_auth').val(prob.auth);
+            $('#mod_score').val(prob.score);
+            $('#mod_date').val(prob.ldate);
+            if (prob.file) {
+                $('#cfile_div').show();
+                $('#cur_file').val("Current File: " + prob.file);
+            } else {
+                $('#cfile_div').hide();
+            }
+            location.href="#modify_problem"
+        }
+    });
 }
 
 function deleteProb(pno)
@@ -151,6 +174,23 @@ function deleteProb(pno)
         });
     } else {   //취소
             return;
+    }
+}
+
+function deleteFile(pno)
+{
+    if (confirm("Do you really want to delte?") == true){
+        $.post('chal/delete_file', {
+            'pno' : pno.value
+        }, function(data) {
+            if(data=='true') {
+                $('#cfile_div').hide();
+            } else {
+                $('#modifyprob-data').show();
+                $('#modifyprob-data').html(data);
+                $('#modifyprob-data').css("color", "red");
+            }
+        });
     }
 }
 

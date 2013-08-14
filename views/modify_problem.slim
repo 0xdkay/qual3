@@ -1,0 +1,41 @@
+article#modify_problem.panel
+  header
+    h2 Modify Problem
+  form#modify_problem action="chal/modify" method="post" enctype="multipart/form-data"
+    input#mod_pno type="hidden" name="pno"
+    div
+      .row.half
+        .12u#modifyprob-data
+
+      .row.half
+        .6u
+          select#mod_category name="category"
+            - for category in settings.category
+              option value="#{category}"
+                | #{category.capitalize}
+        .6u style="text-align: center;"
+          | #{Time.now}
+      .row.half
+        .6u
+          input.text#mod_title name="title" placeholder="Problem Name" type="text" required=""
+        .6u
+          input.text#mod_author name="author" placeholder="author" type="text" required=""
+      .row.half
+        .12u
+          textarea#mod_body name="body" placeholder="Problem Description"
+      .row.half
+        .6u
+          input.text#mod_auth name="auth" placeholder="Auth Key" type="password" required=""
+        .6u
+          input.text#mod_score name="score" placeholder="Score" type="text" required=""
+      .row.half
+        .12u
+          input.text#mod_file name="file" type="file"
+      .row.half#cfile_div
+        .10u
+          input.text#cur_file name="cfile" type="text" readonly=""
+        .2u
+          input.button type="button" onclick="deleteFile(pno)" value="Remove"
+      .row
+        .12u
+          input.button type="submit" value="Modify Problem"
