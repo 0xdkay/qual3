@@ -6,6 +6,23 @@ require 'json'
 module Sinatra
     module Challenge
         module Helpers
+            def get_probs
+                @db = settings.db
+                prob_list = @db.get_probs
+                probs = Array.new(settings.category.size){Array.new}
+                settings.category.each.with_index do |category, index|
+                    prob_list.each do |prob|
+                        if prob[1] == category
+                            if probs[index]
+                                probs[index] += [prob]
+                            else
+                                probs[index] = [prob]
+                            end
+                        end
+                    end
+                end
+                probs.safe_transpose
+            end
         end
 
         def self.registered(app)

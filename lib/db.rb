@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'sqlite3'
 require 'digest/sha1'
+require 'fileutils'
 
 class DB
     def initialize db_name
@@ -132,8 +133,9 @@ class DB
         Time.now.strftime("%Y-%m-%d %H:%M:%S")
     end
 
-    def create_file args
+    def create_file args, hash=true
         if args[:file][:tempfile] and args[:file][:filename]
+            args[:file][:filename] = Digest::SHA1.hexdigest(args[:file][:filename]) if hash
             File.open('uploads/' + args[:category] + "/" + args[:file][:filename], "w") do |f|
                 f.write(args['file'][:tempfile].read)
             end
@@ -169,7 +171,6 @@ class DB
         check_args = [:category, :title, :author, :body, :auth, :score]
         return -1 if not check_params check_args, args
         if args[:file]
-            args[:file][:filename] = Digest::SHA1.hexdigest(args[:file][:filename])
             create_file args
             file = args[:file][:filename]
         else
@@ -282,7 +283,6 @@ class DB
     end
 
     def get_probs
-        require 'pp'
         @db.execute("SELECT t1.pno, t1.category, t1.score, t2.solved FROM #{@prob_table} t1
                                 LEFT JOIN
                                     (SELECT pno, count(*) as solved FROM #{@score_table} GROUP BY pno) t2
@@ -315,6 +315,29 @@ class DB
                                  "pno" => args[:pno],
                                  "id" => args[:id])
         return 1
+    end
+
+    def insert_notice args
+        check_args = [:title, :author, :body]
+        return -1 if not check_params check_args, args
+        if args[:file]
+            args[:category] = "notices"
+            create_file args, false
+            file = args[:file][:filename]
+        else
+            file = ""
+        end
+        return 1 if @db.execute("INSERT INTO #{@notice_table} (title, author, body, file, date)
+                                    VALUES (:title, :author, :body, :file, :date)",
+                                "title" => args[:title],
+                                "author" => args[:author],
+                                "body" => args[:body],
+                                "file" => file,
+                                "date" => get_date)
+    end
+
+    def get_notices
+        @db.execute("SELECT * FROM #{@notice_table} order by no desc")
     end
 end
 

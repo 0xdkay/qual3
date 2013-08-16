@@ -285,10 +285,104 @@
             font-weight: 500;
         }
 
+        article#notice
+        {
+        }
+            
+            article#notice div.items
+            {
+                width: 550px;
+            }
+
+            article#notice ol
+            {
+                background: white;
+                list-style: none;
+                margin-left: 20px;
+            }
+
+            article#notice ol li
+            {
+            }
+                article#notice ol li div.item
+                {
+                    font-family: "Lato", "Myriad Pro", "Arial", sans-serif;
+                    padding: 20px 20px 10px 20px;
+                    margin-bottom: 15px;
+                    -webkit-box-shadow: rgba(0, 0, 0, 0.2) 2px 2px 2px 2px;
+                    -moz-box-shadow: rgba(0, 0, 0, 0.2) 2px 2px 2px 2px;
+                    box-shadow: rgba(0, 0, 0, 0.2) 2px 2px 2px 2px;
+                }
+
+                article#notice ol li div .item-header
+                {
+                    font-weight: normal;
+                    font-size: 18px;
+                    line-height: 1.1;
+                    color: #666;
+                    padding-bottom: 10px;
+                }
+
+                    article#notice ol li div .item-file
+                    {
+                        color: #999;
+                        font-size: 11px;
+                        cursor: pointer;
+                    }
+
+                    article#notice ol li div .item-file:hover
+                    {
+                        color: #00ff00;
+                    }
+
+                    article#notice ol li div .item-meta
+                    {
+                        color: #999;
+                        font-size: 11px;
+                        /*
+                        border-bottom: 1px solid #e5e5e5;
+                        */
+                    }
+
+                    article#notice ol li div .item-meta.right
+                    {
+                        text-align: right;
+                    }
+
+                    article#notice ol li div .item-meta span
+                    {
+                        margin-right: 10px;
+                    }
+
+
+                article#notice ol li div .item-content
+                {
+                    min-height: 50px;
+                    font-family: "Lato", "Myriad Pro", "Arial", sans-serif;
+                    font-size: 14px;
+                    margin: 0;
+                    padding: 0;
+                }
+
+                article#notice ol li div .item-footer
+                {
+                    /*
+                    border-bottom: 1px solid;
+                    border-color: #a5a5a5;
+                    */
+                }
+
+
     article#rule
     {
-      font-family: "Nanum";
     }
+
+            article#rule #rules
+            {
+                font-family: "Nanum";
+                font-size: 16px;
+            }
+
 
 
     article#chal table.prob

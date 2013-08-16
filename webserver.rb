@@ -23,12 +23,19 @@ class Webserver < Sinatra::Base
     use Rack::Deflater
     register Sinatra::SessionAuth
     register Sinatra::Challenge
+    register Sinatra::Notice
+
     configure do
         config = YAML.load_file("config.yml")
         config.each do |key, val|
             set key, val
         end
         set :db, DB.new(settings.dbname)
+
+        FileUtils.mkdir_p 'uploads/notices'
+        settings.category.each do |v|
+            FileUtils.mkdir_p 'uploads/'+v
+        end
     end
   #set :static, true
 =begin
@@ -38,25 +45,12 @@ class Webserver < Sinatra::Base
 =end
 
     get '/' do 
+        notices = get_notices
         if authorized?
-            @db = settings.db
-            prob_list = @db.get_probs
-            probs = Array.new(settings.category.size){Array.new}
-            settings.category.each.with_index do |category, index|
-                prob_list.each do |prob|
-                    if prob[1] == category
-                        if probs[index]
-                            probs[index] += [prob]
-                        else
-                            probs[index] = [prob]
-                        end
-                    end
-                end
-            end
-            probs = probs.safe_transpose
-            slim :index, :locals => {:probs => probs}
+            probs = get_probs
+            slim :index, :locals => {:probs => probs, :notices => notices}
         else
-            slim :index
+            slim :index, :locals => {:notices => notices}
         end
     end
 
@@ -69,6 +63,14 @@ class Webserver < Sinatra::Base
                 :body => params[:message]+"\n\nby #{params[:name]}")
         end
         redirect '/'
+    end
+
+    get '/download/:category/:filename' do
+        if params[:category] == "notices" or authorized? and settings.category.include?(params[:category])
+            send_file "uploads/#{params[:category]}/#{params[:filename]}", 
+            :filename => params[:filename], 
+                :type => 'Application/octet-stream'
+        end
     end
 
     get '/*' do

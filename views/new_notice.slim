@@ -1,0 +1,27 @@
+article#new_notice.panel
+  header
+    h2 New Notice
+  form#new_notice action="notice/new" method="post" enctype="multipart/form-data"
+    div
+      .row.half
+        .12u#newprob-data
+
+      .row.half
+        .6u style="padding-left: 30px;"
+          | Notice
+        .6u style="text-align: center;"
+          | #{Time.now}
+      .row.half
+        .6u
+          input.text name="title" placeholder="Title" type="text" required=""
+        .6u
+          input.text name="author" placeholder="Author" type="text" required=""
+      .row.half
+        .12u
+          textarea name="body" placeholder="Notice Description"
+      .row.half
+        .12u
+          input.text name="file" type="file" 
+      .row
+        .12u
+          input.button type="submit" value="Create Notice"
