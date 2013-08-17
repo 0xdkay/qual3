@@ -212,4 +212,48 @@ function removeNotice(no)
     }
 }
 
+function modifyNotice(no)
+{
+    var notices = $('div[class="item"]');
+    var target;
+    notices.each(function() {
+        if($(this).find('div[class="item-no"]').html() == no) {
+            target = $(this);
+            return;
+        }
+    });
+    if(target) {
+        $('input[name="no"]').val(no);
+        $('#not_title').val(target.find('.item-title').html());
+        $('#not_body').html(target.find('.item-body').html());
+        $('#not_author').val(target.find('.item-author').html());
+        file = target.find('.item-file').html();
+        if(file) {
+            $('#not_cfile_div').show();
+            $('#not_cur_file').val(file);
+        } else {
+            $('#not_cfile_div').hide();
+        }
+        location.href = "#modify_notice";
+    }
+}
+
+function deleteNoticeFile(no)
+{
+    if (confirm("Do you really want to delte?") == true){
+        $.post('notice/delete_file', {
+            'no' : no.value
+        }, function(data) {
+            if(data=='true') {
+                window.location.href = "#notice"
+                location.reload();
+            } else {
+                $('#modifynotice-data').show();
+                $('#modifynotice-data').html(data);
+                $('#modifynotice-data').css("color", "red");
+            }
+        });
+    }
+}
+
 

@@ -135,7 +135,7 @@ class DB
 
     def create_file args, hash=true
         if args[:file][:tempfile] and args[:file][:filename]
-            args[:file][:filename] = Digest::SHA1.hexdigest(args[:file][:filename]) if hash
+            args[:file][:filename] = encrypt(args[:file][:filename]) if hash
             File.open('uploads/' + args[:category] + "/" + args[:file][:filename], "w") do |f|
                 f.write(args['file'][:tempfile].read)
             end
@@ -195,10 +195,10 @@ class DB
                                          "pno" => args[:pno])[0]
         return 0 if not res
         if args[:file]
-            args[:file][:filename] = Digest::SHA1.hexdigest(args[:file][:filename])
+            args[:file][:filename] = encrypt(args[:file][:filename])
             if args[:file][:filename] != res[2]
                 delete_file res
-                create_file args
+                create_file args, false
             end
             file = args[:file][:filename]
         else
@@ -229,7 +229,7 @@ class DB
                                                      "pno" => args[:pno])
     end
 
-    def file_delete args
+    def probfile_delete args
         check_args = [:pno]
         return -1 if not check_params check_args, args
         res = @db.execute("SELECT pno, category, file FROM #{@prob_table} WHERE pno=:pno",
@@ -344,6 +344,44 @@ class DB
         return 0 if res.empty?
         delete_file res
         return 1 if @db.execute("DELETE FROM #{@notice_table} WHERE no=:no",
+                                                        "no" => args[:no])
+    end
+
+    def modify_notice args
+        check_args = [:no, :title, :author, :body]
+        return -1 if not check_params check_args, args
+        res = @db.execute("SELECT no, 'notices', file FROM #{@notice_table} WHERE no=:no",
+                                         "no" => args[:no])[0]
+        return 0 if not res
+        if args[:file]
+            args[:category] = "notices"
+            if args[:file][:filename] != res[2]
+                delete_file res
+                create_file args, false
+            end
+            file = args[:file][:filename]
+        else
+            file = ""
+        end
+        return 1 if @db.execute("UPDATE #{@notice_table} 
+                                                        SET title=:title, author=:author, 
+                                                                body=:body, file=:file
+                                                        WHERE no=:no",
+                                                        "no" => args[:no],
+                                                        "title" => args[:title],
+                                                        "author" => args[:author],
+                                                        "body" => args[:body],
+                                                        "file" => file)
+    end
+
+    def noticefile_delete args
+        check_args = [:no]
+        return -1 if not check_params check_args, args
+        res = @db.execute("SELECT no, 'notices', file FROM #{@notice_table} WHERE no=:no",
+                                            "no" => args[:no])[0]
+        return 0 if res.empty? or res[2].empty?
+        delete_file res
+        return 1 if @db.execute("UPDATE #{@notice_table} SET file='' WHERE no=:no",
                                                         "no" => args[:no])
     end
 

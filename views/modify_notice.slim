@@ -1,0 +1,33 @@
+article#modify_notice.panel
+  header
+    h2 Modify Notice
+  form#modify_notice action="notice/modify" method="post" enctype="multipart/form-data"
+    input.text name="no" type="hidden"
+    div
+      .row.half
+        .12u#modifynotice-data
+
+      .row.half
+        .6u style="padding-left: 30px;"
+          | Notice
+        .6u style="text-align: center;"
+          | #{Time.now}
+      .row.half
+        .6u
+          input.text#not_title name="title" placeholder="Title" type="text" required=""
+        .6u
+          input.text#not_author name="author" placeholder="Author" type="text" required=""
+      .row.half
+        .12u
+          textarea#not_body name="body" placeholder="Notice Description"
+      .row.half
+        .12u
+          input.text#not_file name="file" type="file" 
+      .row.half#not_cfile_div
+        .10u
+          input.text#not_cur_file name="cfile" type="text" readonly=""
+        .2u
+          input.button type="button" onclick="deleteNoticeFile(no)" value="Remove"
+      .row
+        .12u
+          input.button type="submit" value="Modify Notice"

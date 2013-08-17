@@ -66,10 +66,10 @@ class Webserver < Sinatra::Base
     end
 
     get '/download/:category/:filename' do
-        if params[:category] == "notices" or authorized? and settings.category.include?(params[:category])
+        if params[:category] == "notices" or (authorized? and settings.category.include?(params[:category]))
             send_file "uploads/#{params[:category]}/#{params[:filename]}", 
-            :filename => params[:filename], 
-                :type => 'Application/octet-stream'
+                                :filename => params[:filename], 
+                                :type => 'Application/octet-stream'
         end
     end
 

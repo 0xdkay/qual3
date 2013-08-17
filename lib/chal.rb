@@ -78,13 +78,6 @@ module Sinatra
                 end
             end
 
-            app.get '/download/:category/:filename' do
-                if authorized?
-                    send_file "uploads/#{params[:category]}/#{params[:filename]}", 
-                                        :filename => params[:filename], 
-                                        :type => 'Application/octet-stream'
-                end
-            end
 
             app.post '/chal/delete' do
                 if authorized? and admin?
@@ -140,7 +133,7 @@ module Sinatra
             app.post '/chal/delete_file' do
                 if authorized? and admin?
                     @db = settings.db
-                    case @db.file_delete params
+                    case @db.probfile_delete params
                     when 1
                         "true"
                     when 0

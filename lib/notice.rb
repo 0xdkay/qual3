@@ -40,6 +40,34 @@ module Sinatra
                     end
                 end
             end
+
+            app.post '/notice/modify' do
+                if authorized? and admin?
+                    @db = settings.db
+                    case @db.modify_notice params
+                    when 1
+                        redirect '/#notice'
+                    when 0
+                        "That notice doesn't exist"
+                    when -1
+                        "You must fill all the data"
+                    end
+                end
+            end
+
+            app.post '/notice/delete_file' do
+                if authorized? and admin?
+                    @db = settings.db
+                    case @db.noticefile_delete params
+                    when 1
+                        "true"
+                    when 0
+                        "No file exists"
+                    when -1
+                        "You must fill all the data"
+                    end
+                end
+            end
         end
     end
 end

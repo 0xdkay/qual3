@@ -314,7 +314,7 @@
                     box-shadow: rgba(0, 0, 0, 0.2) 2px 2px 2px 2px;
                 }
 
-                article#notice ol li div .item-header
+                article#notice ol li div .item-title
                 {
                     font-weight: normal;
                     font-size: 18px;
@@ -346,6 +346,7 @@
 
                     article#notice ol li div .item-meta.left
                     {
+                        color: #98a6f3;
                         text-align: left;
                     }
 
@@ -378,13 +379,18 @@
                         text-align: right;
                     }
 
-                    article#notice ol li div .item-meta span
-                    {
-                        margin-right: 10px;
-                    }
+                        article#notice ol li div .item-meta.right span.item-author
+                        {
+                            margin-right: 10px;
+                        }
+
+                        article#notice ol li div .item-meta.right .item-no
+                        {
+                            display: none;
+                        }
 
 
-                article#notice ol li div .item-content
+                article#notice ol li div .item-body
                 {
                     min-height: 50px;
                     font-family: "Lato", "Myriad Pro", "Arial", sans-serif;

@@ -7,15 +7,15 @@ article#notice.panel
       .12u#notice-data
     - if authorized? and admin?
       div.right style="margin-bottom: 10px; font-size: 15px"
-        a href="#new_notice"
+        a href="#new_notice" title="new notice"
           | New Notice
     ol
       li
         - notices.each do |notice|
           div.item
-            h2.item-header
+            h2.item-title
               | #{notice[1]}
-            p.item-content
+            p.item-body
               | #{notice[3]}
             - if not notice[4].empty?
               div.item-file title="download" onclick="location.href='download/notices/#{notice[4]}'"
@@ -27,8 +27,12 @@ article#notice.panel
                 div.item-del title="remove" onclick="removeNotice(#{notice[0]})"
                   | Remove 
             div.item-meta.right
-              span.name
-                | Posted by #{notice[2]} 
-              span.time
+              span.item-name-pre
+                | Posted by 
+              span.item-author
+                | #{notice[2]} 
+              span.item-time
                 | #{notice[5]}
+              div.item-no
+                | #{notice[0]}
             div.item-footer

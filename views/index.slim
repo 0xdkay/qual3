@@ -47,12 +47,15 @@ html
         == slim :home
 
         /! Notice
-        - p :locals
         == slim :notice, :locals => {:notices => notices}
 
         /! New Notice
         - if authorized? and admin?
           == slim :new_notice
+
+        /! Modify Notice
+        - if authorized? and admin?
+          == slim :modify_notice
 
         /! Rules
         == slim :rule
