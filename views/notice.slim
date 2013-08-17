@@ -3,6 +3,8 @@ article#notice.panel
     h2 Notice
   hr
   div.items
+    .row.half
+      .12u#notice-data
     - if authorized? and admin?
       div.right style="margin-bottom: 10px; font-size: 15px"
         a href="#new_notice"
@@ -18,6 +20,12 @@ article#notice.panel
             - if not notice[4].empty?
               div.item-file title="download" onclick="location.href='download/notices/#{notice[4]}'"
                 | #{notice[4]}
+            - if authorized? and admin?
+              div.item-meta.left
+                div.item-mod title="modify" onclick="modifyNotice(#{notice[0]})"
+                  | Modify 
+                div.item-del title="remove" onclick="removeNotice(#{notice[0]})"
+                  | Remove 
             div.item-meta.right
               span.name
                 | Posted by #{notice[2]} 

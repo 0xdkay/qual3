@@ -336,6 +336,17 @@ class DB
                                 "date" => get_date)
     end
 
+    def delete_notice args
+        check_args = [:no]
+        return -1 if not check_params check_args, args
+        res = @db.execute("SELECT no, 'notices', file FROM #{@notice_table} WHERE no=:no",
+                                            "no" => args[:no])[0]
+        return 0 if res.empty?
+        delete_file res
+        return 1 if @db.execute("DELETE FROM #{@notice_table} WHERE no=:no",
+                                                        "no" => args[:no])
+    end
+
     def get_notices
         @db.execute("SELECT * FROM #{@notice_table} order by no desc")
     end

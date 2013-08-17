@@ -26,6 +26,20 @@ module Sinatra
                 end
                 redirect '/#notice'
             end
+
+            app.post '/notice/delete' do
+                if authorized? and admin?
+                    @db = settings.db
+                    case @db.delete_notice params
+                    when 1
+                        "true"
+                    when 0
+                        "That notice doesn't exist"
+                    when -1
+                        "You must fill all the data"
+                    end
+                end
+            end
         end
     end
 end

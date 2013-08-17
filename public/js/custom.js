@@ -194,4 +194,22 @@ function deleteFile(pno)
     }
 }
 
+function removeNotice(no)
+{
+    if (confirm("Do you really want to delete?") == true){
+        $.post('notice/delete', {
+            'no' : no
+        }, function(data) {
+            if(data=='true') {
+                window.location.hash = "#notice";
+                location.reload();
+            } else {
+                $('#notice-data').show();
+                $('#notice-data').html(data);
+                $('#notice-data').css("color", "red");
+            }
+        });
+    }
+}
+
 

@@ -344,6 +344,35 @@
                         */
                     }
 
+                    article#notice ol li div .item-meta.left
+                    {
+                        text-align: left;
+                    }
+
+                        article#notice ol li div .item-meta.left .item-mod
+                        {
+                            cursor: pointer;
+                            padding-right: 10px;
+                            float: left;
+                        }
+
+                        article#notice ol li div .item-meta.left .item-mod:hover
+                        {
+                            color: #00ff00;
+                        }
+
+                        article#notice ol li div .item-meta.left .item-del
+                        {
+                            padding-left: 10px;
+                            cursor: pointer;
+                            float: left;
+                        }
+
+                        article#notice ol li div .item-meta.left .item-del:hover
+                        {
+                            color: #00ff00;
+                        }
+
                     article#notice ol li div .item-meta.right
                     {
                         text-align: right;
