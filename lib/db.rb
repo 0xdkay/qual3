@@ -388,6 +388,12 @@ class DB
     def get_notices
         @db.execute("SELECT * FROM #{@notice_table} order by no desc")
     end
+
+    def get_ranks
+        @db.execute("SELECT t3.name, sum(t2.score) as s
+                                FROM #{@score_table} t1, #{@prob_table} t2, #{@user_table} t3
+                                WHERE t1.pno=t2.pno and t1.id=t3.id GROUP BY t3.name ORDER BY s DESC")
+    end
 end
 
 

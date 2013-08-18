@@ -26,10 +26,10 @@ html
       nav#nav
         a.icon.icon-home.active href="#home"
           span Home
-        a.icon.icon-info-sign href="#notice"
-          span Notice
         a.icon.icon-check href="#rule"
           span Rules
+        a.icon.icon-info-sign href="#notice"
+          span Notice
         - if authorized?
           a.icon.icon-folder-close href="#chal"
             span Challenge
@@ -47,7 +47,7 @@ html
         == slim :home
 
         /! Notice
-        == slim :notice, :locals => {:notices => notices}
+        == slim :notice
 
         /! New Notice
         - if authorized? and admin?
@@ -63,7 +63,7 @@ html
 
         /! Chal
         - if authorized?
-          == slim :chal, :locals => {:probs => probs}
+          == slim :chal
 
         /! Chal Show Problem
         - if authorized?
@@ -94,7 +94,7 @@ html
           == slim :recovery
 
         /! Password Reset
-        - if session[:token]
+        - if reset?
           == slim :password_reset
 
 

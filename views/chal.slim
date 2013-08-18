@@ -2,12 +2,16 @@ article#chal.panel
   header
     h2 Problems
     span.byline Enjoy the problems!
+
+  - if admin?
+    a href="#new_problem" title="New Problem"
   table.prob
     tr.prob_title
       - for category in settings.category
         th.prob
           | #{category.capitalize}
 
+    - probs = get_probs
     - probs.each do |prob_line|
       tr.probs
         - prob_line.each do |prob|
@@ -17,7 +21,4 @@ article#chal.panel
           - else
             td
 
-  - if admin?
-    .row
-      .12u
-        input.button type="button" value="New Problem" onclick="location.href='#new_problem'"
+

@@ -8,9 +8,7 @@ require 'yaml'
 require 'libs'
 
 require 'rack/deflater'
-require 'webrick'
-require 'webrick/https'
-require 'openssl'
+require 'thin'
 
 class Array
     def safe_transpose
@@ -44,14 +42,17 @@ class Webserver < Sinatra::Base
     set :some_custom_option, false
 =end
 
-    get '/' do 
-        notices = get_notices
-        if authorized?
-            probs = get_probs
-            slim :index, :locals => {:probs => probs, :notices => notices}
-        else
-            slim :index, :locals => {:notices => notices}
+    module Helpers
+        def get_ranks
+            @db = settings.db
+            @db.get_ranks
         end
+    end
+
+    helpers Webserver::Helpers
+
+    get '/' do 
+        slim :index
     end
 
     post '/email' do

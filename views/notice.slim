@@ -5,12 +5,14 @@ article#notice.panel
   div.items
     .row.half
       .12u#notice-data
-    - if authorized? and admin?
-      div.right style="margin-bottom: 10px; font-size: 15px"
-        a href="#new_notice" title="new notice"
-          | New Notice
+    == slim :rank
     ol
+      - if authorized? and admin?
+        div.right style="margin-bottom: 10px; font-size: 15px"
+          a href="#new_notice" title="new notice"
+            | New Notice
       li
+        - notices = get_notices
         - notices.each do |notice|
           div.item
             h2.item-title

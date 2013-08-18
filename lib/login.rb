@@ -25,6 +25,10 @@ module Sinatra
             def token_link(type, token)
                 "http://#{env['HTTP_HOST']}/#{type}/#{token}"
             end
+
+            def reset?
+                session[:token]
+            end
         end
 
         def self.registered(app)

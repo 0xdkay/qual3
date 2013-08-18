@@ -122,6 +122,8 @@ function checkAuth(pno, auth)
         $('#showprob-data').html(data);
         if(data=='true') {
             $('#showprob-data').css("color", "green");
+            window.location.href="#chal";
+            location.reload();
         } else {
             $('#showprob-data').css("color", "red");
         }
@@ -179,7 +181,7 @@ function deleteProb(pno)
 
 function deleteFile(pno)
 {
-    if (confirm("Do you really want to delte?") == true){
+    if (confirm("Do you really want to delete?") == true){
         $.post('chal/delete_file', {
             'pno' : pno.value
         }, function(data) {
@@ -240,7 +242,7 @@ function modifyNotice(no)
 
 function deleteNoticeFile(no)
 {
-    if (confirm("Do you really want to delte?") == true){
+    if (confirm("Do you really want to delete?") == true){
         $.post('notice/delete_file', {
             'no' : no.value
         }, function(data) {
@@ -256,4 +258,9 @@ function deleteNoticeFile(no)
     }
 }
 
+function refreshWindow()
+{
+    location.reload();
+}
 
+setTimeout('refreshWindow()', 300 * 1000);

@@ -1,0 +1,28 @@
+div.rank
+  h3 Personal Rating
+  table
+    thead
+      tr
+        th
+          | Rank
+        th
+          | Name
+        th
+          | Score
+    tbody
+      - ranks = get_ranks
+      - ranks.each.with_index(1) do |rank, index|
+        tr
+          td.rank
+            - if index==1
+              img src="images/gold.png"
+            - elsif index==2
+              img src="images/silver.png"
+            - elsif index==3
+              img src="images/bronze.png"
+            | #{index}
+          td.name
+            | #{rank[0]}
+          td.score
+            | #{rank[1]}
+
