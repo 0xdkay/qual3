@@ -516,15 +516,49 @@
                 padding: 0;
                 font-family: "PT Mono", "Courier New";
                 font-weight: bold;
-                background: #ffc123;
-                color: #eee;
+                color: #fff;
+                background: black;
                 cursor: pointer;
                 overflow: hidden;
+                opacity: 0.125;
             }
 
             article#chal table.prob tr.probs td.prob:hover
             {
-                background: #ff723c;
+                opacity: 1;
+            }
+
+            article#chal table.prob tr.probs td.prob.break
+            {
+                background: url('images/fire.jpg');
+                opacity: 0.9;
+            }
+
+            article#chal table.prob tr.probs td.prob.break:hover
+            {
+                opacity: 1.0;
+            }
+
+            article#chal table.prob tr.probs td.prob.no_break
+            {
+                background: url('images/fire.jpg');
+                opacity: 0.125;
+            }
+
+            article#chal table.prob tr.probs td.prob.no_break:hover
+            {
+                background: black;
+                opacity: 1;
+            }
+
+            article#chal table.prob tr.probs td.prob.solved
+            {
+                opacity: 0.9;
+            }
+
+            article#chal table.prob tr.probs td.prob.solved:hover
+            {
+                opacity: 1.0;
             }
 
         article#show_problem

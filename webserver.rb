@@ -47,6 +47,10 @@ class Webserver < Sinatra::Base
             @db = settings.db
             @db.get_ranks
         end
+
+        def get_id
+            session[:id]
+        end
     end
 
     helpers Webserver::Helpers

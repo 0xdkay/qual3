@@ -23,6 +23,20 @@ module Sinatra
                 end
                 probs.safe_transpose
             end
+
+            def get_solved
+                if authorized?
+                    @db = settings.db
+                    res = @db.get_solved(session[:id])
+                    if res == -1
+                        "You must fill all the data"
+                    else
+                        solved = {}
+                        res.each {|v| solved[v[0]] = v[1]}
+                        solved
+                    end
+                end
+            end
         end
 
         def self.registered(app)
