@@ -390,24 +390,43 @@ class DB
     end
 
     def get_ranks
-        @db.execute("SELECT t3.name, sum(t2.score) as s
+        breaks = get_breaks
+        res = @db.execute("SELECT t3.name, sum(t2.score) as s
                                 FROM #{@score_table} t1, #{@prob_table} t2, #{@user_table} t3
                                 WHERE t1.pno=t2.pno and t1.id=t3.id GROUP BY t3.name ORDER BY s DESC")
+
+        scores = Hash[*res.flatten]
+        prev = nil
+        cnt = 3
+        breaks.each do |v|
+            if not prev
+                prev = v[0]
+            else
+                if prev == v[0]
+                    cnt -= 1
+                else
+                    prev = v[0]
+                    cnt = 3
+                end
+            end
+            scores[v[1]] += cnt
+        end
+        scores
     end
 
-    def get_scores
+    def get_breaks
         @db.execute("SELECT * FROM #{@score_table} t1
                                         WHERE t1.id IN (
                                             SELECT t2.id
                                             FROM #{@score_table} t2
                                             WHERE t1.pno=t2.pno
                                             ORDER BY t2.date ASC
-                                            LIMIT 3)")
+                                            LIMIT 3)
+                                        ORDER BY t1.pno, t1.date ASC")
     end
 
     def get_solved id
         return -1 if not id
-        require 'pp'
         @db.execute("SELECT t1.pno, (SELECT t2.id FROM #{@score_table} t2
                                                                         WHERE t1.pno=t2.pno
                                                                         ORDER BY t2.date ASC

@@ -51,7 +51,6 @@ class Webserver < Sinatra::Base
     helpers Webserver::Helpers
 
     get '/' do 
-        settings.db.get_scores
         slim :index
     end
 
