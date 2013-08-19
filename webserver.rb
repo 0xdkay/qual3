@@ -36,11 +36,6 @@ class Webserver < Sinatra::Base
         end
     end
   #set :static, true
-=begin
-    set :logging, true
-    set :dump_errors, false
-    set :some_custom_option, false
-=end
 
     module Helpers
         def get_ranks
@@ -56,6 +51,7 @@ class Webserver < Sinatra::Base
     helpers Webserver::Helpers
 
     get '/' do 
+        settings.db.get_scores
         slim :index
     end
 

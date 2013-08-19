@@ -395,15 +395,25 @@ class DB
                                 WHERE t1.pno=t2.pno and t1.id=t3.id GROUP BY t3.name ORDER BY s DESC")
     end
 
+    def get_scores
+        @db.execute("SELECT * FROM #{@score_table} t1
+                                        WHERE t1.id IN (
+                                            SELECT t2.id
+                                            FROM #{@score_table} t2
+                                            WHERE t1.pno=t2.pno
+                                            ORDER BY t2.date ASC
+                                            LIMIT 3)")
+    end
+
     def get_solved id
         return -1 if not id
-        @db.execute("SELECT t1.pno, t2.id
-                                FROM #{@score_table} t1,
-                                        (SELECT t1.pno, t1.id 
-                                            FROM #{@score_table} t1, #{@score_table} t2
-                                            WHERE t1.date<t2.date
-                                            GROUP BY t1.pno) t2
-                                WHERE t1.id=:id and t1.pno=t2.pno",
+        require 'pp'
+        @db.execute("SELECT t1.pno, (SELECT t2.id FROM #{@score_table} t2
+                                                                        WHERE t1.pno=t2.pno
+                                                                        ORDER BY t2.date ASC
+                                                                        limit 1)
+                                FROM #{@score_table} t1
+                                WHERE t1.id=:id",
                                 "id" => id)
     end
 end
