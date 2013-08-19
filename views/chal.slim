@@ -1,10 +1,10 @@
 article#chal.panel
   header
-    h2 Problems
-    span.byline Enjoy the problems!
+    h2 Challenge
 
-  - if admin?
-    a href="#new_problem" title="New Problem"
+  #chartContainer2
+  /!#chartContainer
+  hr
   table.prob
     tr.prob_title
       - for category in settings.category
@@ -35,3 +35,8 @@ article#chal.panel
                   | #{prob[1][0..2].upcase+prob[2].to_s}
           -else
             td.no
+
+  - if admin?
+    a href="#new_problem" title="New Problem"
+      |New Problem
+

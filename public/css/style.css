@@ -487,9 +487,40 @@
             }
 
 
+        article#chal #chartContainer
+        {
+            width: 400px;
+            height: 300px;
+            float: left;
+        }
+
+        article#chal #chartContainer div a
+        {
+            display: none;
+        }
+
+        article#chal #chartContainer2
+        {
+            padding-left: 20px;
+            width: 400px;
+            height: 300px;
+        }
+
+        article#chal #chartContainer2 div a
+        {
+            display: none;
+        }
+
+        article#chal hr
+        {
+            padding: 0;
+            padding-bottom: 10px;
+        }
+
 
     article#chal table.prob
         {
+            padding-top: 10px;
             table-layout: fixed;
             text-align: center;
             border-collapse: separate;

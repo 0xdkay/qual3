@@ -263,4 +263,130 @@ function refreshWindow()
     location.reload();
 }
 
+function showBar() {
+    var chart = new CanvasJS.Chart("chartContainer", {
+        theme: "theme2",//theme1
+            width: 400,
+            height: 300,
+            title:{
+                text: "Top 8 Rankers",
+                fontColor: "#777",
+                fontFamily: "Verdana",
+                fontSize: 22,
+                fontWeight: 600,
+            },
+            data: [              
+    {
+        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+            type: "column",
+            dataPoints: rating
+    }
+    ]
+    });
+
+    chart.render();
+}
+
+function showPie() {
+    var chart = new CanvasJS.Chart("chartContainer", {
+            theme: "theme2",//theme1
+            width: 400,
+            height: 300,
+            title:{
+                text: "Latest Top 8 Rankers",
+                fontColor: "#777",
+                fontFamily: "Verdana",
+                fontSize: 22,
+                fontWeight: 600,
+            },
+            data: [              
+    {
+        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+            type: "pie",
+            dataPoints: rating
+    }
+    ]
+    });
+
+    chart.render();
+}
+
+function getRank() {
+    ratings = []
+    $.ajax({
+        'async': false,
+        'url' : '/rank/5', 
+        'success': function(data) {
+            if (data != "NO") {
+                var ranks = $.parseJSON(data);
+                for(i=0; i<ranks.length; i++) {
+                    var datas = [];
+                    for(j=0; j<12 && ranks[i][1] && ranks[i][1][j]; j++) {
+                        datas.push({
+                            x: parseInt(ranks[i][1][j][0],10) * 1000,
+                            y: parseInt(ranks[i][1][j][1],10)
+                        });
+                    }
+                    ratings.push({
+                        type: "line",
+                        lineThickness:3,
+                        showInLegend: true,
+                        name: ranks[i][0],
+                        axisYType:"secondary",
+                        xValueType: "dateTime",
+                        dataPoints: datas,
+                    });
+                }
+            }
+        }
+    });
+    return ratings;
+}
+
+function showLine() {
+    var chart = new CanvasJS.Chart("chartContainer2",
+    {
+        zoomEnabled: true,
+        width: 800,
+        height: 300,
+        title:{
+            text: "Latest Top 8 Rankers",
+            fontColor: "#777",
+            fontFamily: "Verdana",
+            fontSize: 22,
+            fontWeight: 600,
+        },
+        axisY2:{
+            interlacedColor: "WhiteSmoke",
+            gridColor: "LightGray",      
+            tickColor: "Silver",								
+        },
+        theme: "theme2",
+        legend:{
+            verticalAlign: "bottom",
+            horizontalAlign: "center",
+            fontSize: 15,
+            fontFamily: "Lucida Sans Unicode"
+        },
+        data: getRank(),
+    });
+    chart.render();
+}
+
+
+var rating = [];
+$('tbody[class="ranks"]').find('tr').each(function(i) {
+    var name = $(this).find('td[class="name"]').html();
+    var score = $(this).find('td[class="score"]').html();
+    if(i == 0)
+    rating[i] = {label: name, y: parseInt(score, 10), exploded: true}
+    else
+    rating[i] = {label: name, y: parseInt(score, 10)}
+});
+
+
+//showBar();
+//showPie();
+showLine();
+
 setTimeout('refreshWindow()', 300 * 1000);

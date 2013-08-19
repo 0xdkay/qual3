@@ -213,5 +213,6 @@ jQuery(window).load(function() {
             if (id in panels)
                 panels[id].h5u_activate();
         });
-    
 });
+
+

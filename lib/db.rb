@@ -22,7 +22,7 @@ class DB
             'name' varchar(50) NOT NULL,
             'sno' varchar(50) NOT NULL,
             'mail' varchar(50) NOT NULL,
-            'date' timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+            'date' timestamp DEFAULT ((julianday('now') - 2440587.5) * 86400.0),
             'ldate' timestamp DEFAULT NULL,
             'ip' varchar(50) NOT NULL,
             'lip' varchar(50) DEFAULT NULL,
@@ -41,7 +41,7 @@ class DB
             'auth' varchar(50) NOT NULL,
             'score' integer NOT NULL,
             'file' varchar(50) DEFAULT NULL,
-            'date' timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+            'date' timestamp DEFAULT ((julianday('now') - 2440587.5) * 86400.0),
             'ldate' timestamp DEFAULT NULL
         )
         "
@@ -53,7 +53,7 @@ class DB
                 'author' varchar(50) NOT NULL,
                 'body' text,
                 'file' varchar(50) DEFAULT NULL,
-                'date' timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+                'date' timestamp DEFAULT ((julianday('now') - 2440587.5) * 86400.0),
                 'ldate' timestamp DEFAULT NULL
             )
         "
@@ -62,7 +62,7 @@ class DB
         CREATE TABLE IF NOT EXISTS '#{@score_table}' (
             'pno' integer NOT NULL,
             'id' varchar(50) NOT NULL,
-            'date' timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+            'date' timestamp DEFAULT ((julianday('now') - 2440587.5) * 86400.0),
             PRIMARY KEY ('pno','id')
         )
         "
@@ -73,7 +73,7 @@ class DB
         ON #{@user_table}
         FOR EACH ROW
         BEGIN
-        UPDATE #{@user_table} SET ldate = CURRENT_TIMESTAMP WHERE id=old.id;
+        UPDATE #{@user_table} SET ldate = ((julianday('now') - 2440587.5) * 86400.0) WHERE id=old.id;
         END
         "
 
@@ -83,7 +83,7 @@ class DB
         ON #{@prob_table}
         FOR EACH ROW
         BEGIN
-        UPDATE #{@prob_table} SET ldate = CURRENT_TIMESTAMP WHERE pno=old.pno;
+        UPDATE #{@prob_table} SET ldate = ((julianday('now') - 2440587.5) * 86400.0) WHERE pno=old.pno;
         END
         "
 
@@ -93,7 +93,7 @@ class DB
         ON #{@notice_table}
         FOR EACH ROW
         BEGIN
-        UPDATE #{@notice_table} SET ldate = CURRENT_TIMESTAMP WHERE no=old.no;
+        UPDATE #{@notice_table} SET ldate = ((julianday('now') - 2440587.5) * 86400.0) WHERE no=old.no;
         END
         "
 
@@ -104,7 +104,7 @@ class DB
         ON #{@score_table}
         FOR EACH ROW
         BEGIN
-        UPDATE #{@score_table} SET date = CURRENT_TIMESTAMP WHERE pno=old.pno and id=old.id;
+        UPDATE #{@score_table} SET date = ((julianday('now') - 2440587.5) * 86400.0) WHERE pno=old.pno and id=old.id;
         END
         "
 
@@ -126,11 +126,11 @@ class DB
     end
 
     def new_token mail
-        encrypt(mail+Time.now.utc.to_s).force_encoding("UTF-8")
+        encrypt(mail+Time.now.to_i).force_encoding("UTF-8")
     end
 
     def get_date 
-        Time.now.strftime("%Y-%m-%d %H:%M:%S")
+        Time.now.to_i
     end
 
     def create_file args, hash=true
@@ -387,6 +387,60 @@ class DB
 
     def get_notices
         @db.execute("SELECT * FROM #{@notice_table} order by no desc")
+    end
+
+    def get_rank_series min
+        max_date = Time.now.to_i
+        rank_series = {}
+        dates = []
+        12.times {|i| dates += [(max_date - i*min*60)]}
+
+        dates.each do |date|
+            res = @db.execute("SELECT t3.name, sum(t2.score) as s
+                                    FROM #{@score_table} t1, #{@prob_table} t2, #{@user_table} t3
+                                    WHERE t1.pno=t2.pno and t1.id=t3.id 
+                                                and t1.date<=:date
+                                                and t2.date<=:date
+                                    GROUP BY t3.name 
+                                    ORDER BY s DESC
+                                    LIMIT 8",
+                                             date)
+            scores = Hash[*res.flatten]
+            breaks = @db.execute("SELECT * FROM #{@score_table} t1
+                                            WHERE t1.id IN (
+                                                SELECT t2.id
+                                                FROM #{@score_table} t2
+                                                WHERE t1.pno=t2.pno
+                                                            AND t1.date<=:date
+                                                            AND t2.date<=:date
+                                                ORDER BY t2.date ASC
+                                                LIMIT 3)
+                                            ORDER BY t1.pno, t1.date ASC",
+                                    "date" => date)
+            prev = nil
+            cnt = 3
+            breaks.each do |v|
+                if not prev
+                    prev = v[0]
+                else
+                    if prev == v[0]
+                        cnt -= 1
+                    else
+                        prev = v[0]
+                        cnt = 3
+                    end
+                end
+                scores[v[1]] += cnt
+            end
+            scores.each do |v|
+                if rank_series[v[0]]
+                    rank_series[v[0]] += [[date, v[1]]]
+                else
+                    rank_series[v[0]] = [[date, v[1]]]
+                end
+            end
+        end
+        rank_series.map {|key, val| [key, val.reverse]}
     end
 
     def get_ranks

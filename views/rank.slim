@@ -9,10 +9,10 @@ div.rank
           | Name
         th
           | Score
-    tbody
+    tbody.ranks
       - ranks = get_ranks
       - ranks.each.with_index(1) do |rank, index|
-        tr
+        tr.ranks
           td.rank
             - if index==1
               img src="images/gold.png"

@@ -46,12 +46,27 @@ class Webserver < Sinatra::Base
         def get_id
             session[:id]
         end
+
+        def get_rank_series min
+            @db = settings.db
+            @db.get_rank_series min
+        end
     end
 
     helpers Webserver::Helpers
 
     get '/' do 
         slim :index
+    end
+
+    get '/rank/:min' do
+        min = params[:min].to_i ? params[:min].to_i : 5;
+        res = get_rank_series min
+        if not res
+            "NO"
+        else
+            res.to_json
+        end
     end
 
     post '/email' do
