@@ -8,6 +8,7 @@ require 'yaml'
 require 'libs'
 
 require 'rack/deflater'
+require 'rack/ssl'
 require 'thin'
 
 class Array
@@ -19,6 +20,8 @@ end
 
 class Webserver < Sinatra::Base
     use Rack::Deflater
+    use Rack::SSL
+
     register Sinatra::SessionAuth
     register Sinatra::Challenge
     register Sinatra::Notice
@@ -91,5 +94,6 @@ class Webserver < Sinatra::Base
     get '/*' do
         redirect '/'
     end
+
 end
 

@@ -23,7 +23,7 @@ module Sinatra
             end
 
             def token_link(type, token)
-                "http://#{env['HTTP_HOST']}/#{type}/#{token}"
+                "https://#{env['HTTP_HOST']}/#{type}/#{token}"
             end
 
             def reset?

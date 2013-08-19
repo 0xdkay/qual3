@@ -3,6 +3,11 @@ This page is for the 3rd qual.
 
 ==========================
 
-rackup -p -o 
+thin --ssl --ssl-key-file certs/my-server.key --ssl-cert-file certs/my-server.crt start -p 12312
 
-
+TODO:
+    - problem status
+    - breakthrough can open next problem
+    - notify message for session
+    - error setting
+    - multiple file inclusion

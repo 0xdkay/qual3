@@ -126,7 +126,7 @@ class DB
     end
 
     def new_token mail
-        encrypt(mail+Time.now.to_i).force_encoding("UTF-8")
+        encrypt(mail+Time.now.to_i.to_s).force_encoding("UTF-8")
     end
 
     def get_date 
