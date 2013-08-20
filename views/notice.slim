@@ -34,7 +34,7 @@ article#notice.panel
               span.item-author
                 | #{notice[2]} 
               span.item-time
-                | #{notice[5]}
+                | #{Time.at(notice[5])}
               div.item-no
                 | #{notice[0]}
             div.item-footer

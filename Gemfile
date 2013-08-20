@@ -15,4 +15,4 @@ gem 'yaml'
 gem 'rack/deflater'
 gem 'rack/ssl'
 gem 'thin'
-
+gem 'foreman'

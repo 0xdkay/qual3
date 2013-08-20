@@ -19,8 +19,6 @@ class Array
 end
 
 class Webserver < Sinatra::Base
-    use Rack::Deflater
-    use Rack::SSL
 
     register Sinatra::SessionAuth
     register Sinatra::Challenge
@@ -32,6 +30,7 @@ class Webserver < Sinatra::Base
             set key, val
         end
         set :db, DB.new(settings.dbname)
+        set :register_key, File.read(settings.register_key_path)
 
         FileUtils.mkdir_p 'uploads/notices'
         settings.category.each do |v|
@@ -96,4 +95,5 @@ class Webserver < Sinatra::Base
     end
 
 end
+
 

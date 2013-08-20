@@ -11,7 +11,6 @@ class DB
         @prob_table = "QUAL_PROB_TBL"
         @score_table = "QUAL_SCORE_TBL"
         @notice_table = "QUAL_NOTICE_TBL"
-        @secret = YAML.load_file("config.yml")["token_key"].to_s
 
         @db.execute "PRAGMA encoding = 'UTF-8';"
 
@@ -113,7 +112,7 @@ class DB
 
     protected
     def encrypt data
-        Digest::SHA1.hexdigest(data+@secret)
+        Digest::SHA1.hexdigest(data)
     end
 
     def check_params check, input

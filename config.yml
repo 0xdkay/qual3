@@ -1,0 +1,25 @@
+name: qual3
+register_key_path: register_key
+email: insinoa@gmail.com
+public_folder: /home/dongkwan/git/qual3/public
+dbname: qual3.db
+bind: 0.0.0.0
+port: 12312
+ssl: true
+ssl_cert_file: certs/my-server.crt
+ssl_key_file: certs/my-server.key
+sessions: true
+show_exceptions: false
+dump_errors: true
+admin: gon
+server: thin
+views: views
+category: 
+  - crypto
+  - system
+  - trivia
+  - network
+  - binary
+  - forensic
+
+
