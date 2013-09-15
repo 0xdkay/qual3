@@ -123,7 +123,7 @@ function checkAuth(pno, auth)
         if(data=='true') {
             $('#showprob-data').css("color", "green");
             window.location.href="#chal";
-            location.reload();
+            window.location.reload();
         } else {
             $('#showprob-data').css("color", "red");
         }
@@ -167,7 +167,7 @@ function deleteProb(pno)
         }, function(data) {
             if(data=='true') {
                 window.location.hash = "#chal";
-                location.reload();
+                window.location.reload();
             } else {
                 $('#showprob-data').show();
                 $('#showprob-data').html(data);
@@ -204,7 +204,7 @@ function removeNotice(no)
         }, function(data) {
             if(data=='true') {
                 window.location.hash = "#notice";
-                location.reload();
+                window.location.reload();
             } else {
                 $('#notice-data').show();
                 $('#notice-data').html(data);
@@ -248,7 +248,7 @@ function deleteNoticeFile(no)
         }, function(data) {
             if(data=='true') {
                 window.location.href = "#notice"
-                location.reload();
+                window.location.reload();
             } else {
                 $('#modifynotice-data').show();
                 $('#modifynotice-data').html(data);
@@ -260,7 +260,7 @@ function deleteNoticeFile(no)
 
 function refreshWindow()
 {
-    location.reload();
+    window.location.reload();
 }
 
 function showBar() {
@@ -312,26 +312,56 @@ function showPie() {
 }
 
 function getRank() {
-    ratings = []
+    ratings = [];
     $.ajax({
         'async': false,
         'url' : '/rank/5', 
         'success': function(data) {
             if (data != "NO") {
                 var ranks = $.parseJSON(data);
-                for(i=0; i<ranks.length; i++) {
+                if (ranks.length > 0){
+                    for(i=0; i<8; i++) {
+                        var datas = [];
+                        if(ranks[i]) {
+                            for(j=0; j<12; j++) {
+                                if(ranks[i][1] && ranks[i][1][j]){
+                                    prev = parseInt(ranks[i][1][j][0],10) * 1000;
+                                    datas.push({
+                                        x: parseInt(ranks[i][1][j][0],10) * 1000,
+                                        y: parseInt(ranks[i][1][j][1],10)
+                                    });
+                                } else {
+                                    datas.unshift({
+                                        x: prev - j*5*1000*60,
+                                        y: 0
+                                    });
+                                }
+                            }
+                            ratings.push({
+                                type: "line",
+                                lineThickness:3,
+                                showInLegend: true,
+                                name: ranks[i][0],
+                                axisYType:"secondary",
+                                xValueType: "dateTime",
+                                dataPoints: datas,
+                            });
+                        }
+                    }
+                } else {
                     var datas = [];
-                    for(j=0; j<12 && ranks[i][1] && ranks[i][1][j]; j++) {
-                        datas.push({
-                            x: parseInt(ranks[i][1][j][0],10) * 1000,
-                            y: parseInt(ranks[i][1][j][1],10)
+                    for(j=0; j<12; j++) {
+                        date = new Date();
+                        datas.unshift({
+                            x: date.getTime()-5*j*60*1000,
+                            y: 0
                         });
                     }
                     ratings.push({
                         type: "line",
                         lineThickness:3,
                         showInLegend: true,
-                        name: ranks[i][0],
+                        name: " ",
                         axisYType:"secondary",
                         xValueType: "dateTime",
                         dataPoints: datas,
@@ -356,10 +386,14 @@ function showLine() {
             fontSize: 22,
             fontWeight: 600,
         },
-        axisY2:{
+        axisX:{
+            valueFormatString: "HH:mm",
+        },
+        axisY:{
             interlacedColor: "WhiteSmoke",
             gridColor: "LightGray",      
             tickColor: "Silver",								
+            minimum: 0,
         },
         theme: "theme2",
         legend:{
@@ -387,6 +421,6 @@ $('tbody[class="ranks"]').find('tr').each(function(i) {
 
 //showBar();
 //showPie();
-showLine();
+//showLine();
 
-setTimeout('refreshWindow()', 300 * 1000);
+//setTimeout('refreshWindow()', 60 * 1000);

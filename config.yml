@@ -4,8 +4,8 @@ email: insinoa@gmail.com
 public_folder: /home/dongkwan/git/qual3/public
 dbname: qual3.db
 bind: 0.0.0.0
-port: 12312
-ssl: true
+port: 12313
+ssl: false
 ssl_cert_file: certs/my-server.crt
 ssl_key_file: certs/my-server.key
 sessions: true
@@ -18,7 +18,7 @@ category:
   - crypto
   - system
   - trivia
-  - network
+  - Web
   - binary
   - forensic
 

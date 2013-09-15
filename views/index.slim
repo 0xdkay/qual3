@@ -29,6 +29,8 @@ html
           span Rules
         a.icon.icon-info-sign href="#notice"
           span Notice
+        a.icon.icon-star href="#rank_all"
+          span RankAll
         - if authorized?
           a.icon.icon-folder-close href="#chal"
             span Challenge
@@ -59,6 +61,8 @@ html
         /! Rules
         == slim :rule
 
+        /! Rank_all
+        == slim :rank_all
 
         /! Chal
         - if authorized?
@@ -107,5 +111,7 @@ html
           | html5up
     script src="js/canvasjs.min.js"
     script src="js/custom.js"
+    - if authorized? 
+      script showLine();
 
 

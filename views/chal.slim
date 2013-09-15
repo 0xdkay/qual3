@@ -19,20 +19,22 @@ article#chal.panel
         - prob_line.each do |prob|
           - if prob
             - prob[3] = 0 if not prob[3]
+            - prob[2] = prob[2].to_s
             - if solved[prob[0]]
               - if solved[prob[0]] == my_id
-                td.prob.break onclick="showProb(#{prob[0]})" title="solved by #{prob[3]}"
-                  | #{prob[1][0..2].upcase+prob[2].to_s}
+                td.prob.break onclick="showProb(#{prob[0]})" title="#{prob[4]+" ("+prob[2]+")\n"}solved by #{prob[3]}"
+                  /!| #{prob[1][0..2].upcase+prob[2].to_s}
+                  | #{prob[4]}
               - else
-                td.prob.solved onclick="showProb(#{prob[0]})" title="solved by #{prob[3]}"
-                  | #{prob[1][0..2].upcase+prob[2].to_s}
+                td.prob.solved onclick="showProb(#{prob[0]})" title="#{prob[4]+" ("+prob[2]+")\n"}solved by #{prob[3]}"
+                  | #{prob[4]}
             - else
               - if prob[3] > 0
-                td.prob.no_break onclick="showProb(#{prob[0]})" title="solved by #{prob[3]}"
-                  | #{prob[1][0..2].upcase+prob[2].to_s}
+                td.prob.no_break onclick="showProb(#{prob[0]})" title="#{prob[4]+" ("+prob[2]+")\n"}solved by #{prob[3]}"
+                  | #{prob[4]}
               - else prob
-                td.prob onclick="showProb(#{prob[0]})" title="solved by #{prob[3]}"
-                  | #{prob[1][0..2].upcase+prob[2].to_s}
+                td.prob onclick="showProb(#{prob[0]})" title="#{prob[4]+" ("+prob[2]+")\n"}solved by #{prob[3]}"
+                  | #{prob[4]}
           -else
             td.no
 

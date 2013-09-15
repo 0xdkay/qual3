@@ -1,0 +1,42 @@
+article#rank_all.panel
+  header
+    h2 Rank All
+  hr
+  div.rank_all
+    h3 Personal Rating
+    table
+      thead
+        tr
+          th
+            | Rank
+          th
+            | ID
+          th
+            | Name
+          th
+            | Sno
+          th
+            | Score
+      tbody.ranks
+        - ranks = get_ranks_all
+        - ranks.map.with_index(1) do |val, index|
+          tr.ranks
+            td.rank
+              - if index==1
+                img src="images/gold.png"
+              - elsif index==2
+                img src="images/silver.png"
+              - elsif index==3
+                img src="images/bronze.png"
+              | #{index}
+            td.id
+              | #{val[0]}
+            td.name
+              | #{val[1]}
+            td.sno
+              | #{val[2]}
+            td.score
+              | #{val[3]}
+
+
+

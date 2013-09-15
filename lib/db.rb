@@ -201,7 +201,7 @@ class DB
             end
             file = args[:file][:filename]
         else
-            file = ""
+            file = res[2]
         end
         return 1 if @db.execute("UPDATE #{@prob_table} 
                                                         SET category=:category, title=:title, author=:author, 
@@ -224,8 +224,10 @@ class DB
                                             "pno" => args[:pno])[0]
         return 0 if res.empty?
         delete_file res
-        return 1 if @db.execute("DELETE FROM #{@prob_table} WHERE pno=:pno",
-                                                     "pno" => args[:pno])
+        @db.execute("DELETE FROM #{@prob_table} WHERE pno=:pno",
+                                "pno" => args[:pno])
+        @db.execute("DELETE FROM #{@score_table} WHERE pno=:pno",
+                                "pno" => args[:pno])
     end
 
     def probfile_delete args
@@ -282,7 +284,7 @@ class DB
     end
 
     def get_probs
-        @db.execute("SELECT t1.pno, t1.category, t1.score, t2.solved FROM #{@prob_table} t1
+        @db.execute("SELECT t1.pno, t1.category, t1.score, t2.solved, t1.title FROM #{@prob_table} t1
                                 LEFT JOIN
                                     (SELECT pno, count(*) as solved FROM #{@score_table} GROUP BY pno) t2
                                 ON t1.pno = t2.pno
@@ -395,29 +397,30 @@ class DB
         12.times {|i| dates += [(max_date - i*min*60)]}
 
         dates.each do |date|
-            res = @db.execute("SELECT t3.name, sum(t2.score) as s
-                                    FROM #{@score_table} t1, #{@prob_table} t2, #{@user_table} t3
-                                    WHERE t1.pno=t2.pno and t1.id=t3.id 
-                                                and t1.date<=:date
-                                                and t2.date<=:date
-                                    GROUP BY t3.name 
-                                    ORDER BY s DESC
-                                    LIMIT 8",
-                                             date)
+            res = @db.execute("SELECT t3.id, sum(t2.score) as s
+                                                    FROM #{@score_table} t1, #{@prob_table} t2, #{@user_table} t3
+                                                    WHERE t1.pno=t2.pno and t1.id=t3.id 
+                                                                and t1.date<=:date
+                                                                and t2.date<=:date
+                                                    GROUP BY t3.id
+                                                    ORDER BY s DESC
+                                                    LIMIT 8",
+                                                    "date" => date)
             scores = Hash[*res.flatten]
             breaks = @db.execute("SELECT * FROM #{@score_table} t1
-                                            WHERE t1.id IN (
-                                                SELECT t2.id
-                                                FROM #{@score_table} t2
-                                                WHERE t1.pno=t2.pno
-                                                            AND t1.date<=:date
-                                                            AND t2.date<=:date
-                                                ORDER BY t2.date ASC
-                                                LIMIT 3)
-                                            ORDER BY t1.pno, t1.date ASC",
-                                    "date" => date)
+                                                        WHERE t1.id IN (
+                                                            SELECT t2.id
+                                                            FROM #{@score_table} t2
+                                                            WHERE t1.pno=t2.pno
+                                                                        AND t1.date<=:date
+                                                                        AND t2.date<=:date
+                                                            ORDER BY t2.date ASC
+                                                            LIMIT 3)
+                                                        ORDER BY t1.pno, t1.date ASC",
+                                                        "date" => date)
             prev = nil
             cnt = 3
+
             breaks.each do |v|
                 if not prev
                     prev = v[0]
@@ -429,8 +432,15 @@ class DB
                         cnt = 3
                     end
                 end
-                scores[v[1]] += cnt
+                if scores[v[1]]
+                    scores[v[1]] += cnt
+                else
+                    scores[v[1]] = cnt
+                end
             end
+
+            scores = scores.sort_by {|key, val| val}.reverse
+
             scores.each do |v|
                 if rank_series[v[0]]
                     rank_series[v[0]] += [[date, v[1]]]
@@ -442,11 +452,49 @@ class DB
         rank_series.map {|key, val| [key, val.reverse]}
     end
 
+    def get_ranks_all
+        breaks = get_breaks
+        res = @db.execute("SELECT t3.id, t3.name, t3.sno, sum(t2.score) as s
+                                FROM #{@score_table} t1, #{@prob_table} t2, #{@user_table} t3
+                                WHERE t1.pno=t2.pno and t1.id=t3.id GROUP BY t3.id ORDER BY s DESC")
+
+        scores = Hash[*res.flatten]
+        scores = {}
+        namelist = {}
+        res.each do |v|
+            scores[v[0]] = v[3]
+            namelist[v[0]] = [v[1],v[2]]
+        end
+
+        prev = nil
+        cnt = 3
+        breaks.each do |v|
+            if not prev
+                prev = v[0]
+            else
+                if prev == v[0]
+                    cnt -= 1
+                else
+                    prev = v[0]
+                    cnt = 3
+                end
+            end
+            if scores[v[1]]
+                scores[v[1]] += cnt
+            else
+                scores[v[1]] = cnt
+            end
+        end
+        scores = scores.sort_by {|key, val| val}.reverse
+        scores = scores.map {|key, val| [key, namelist[key][0], namelist[key][1], val]}
+        scores
+    end
+
     def get_ranks
         breaks = get_breaks
-        res = @db.execute("SELECT t3.name, sum(t2.score) as s
+        res = @db.execute("SELECT t3.id, sum(t2.score) as s
                                 FROM #{@score_table} t1, #{@prob_table} t2, #{@user_table} t3
-                                WHERE t1.pno=t2.pno and t1.id=t3.id GROUP BY t3.name ORDER BY s DESC")
+                                WHERE t1.pno=t2.pno and t1.id=t3.id GROUP BY t3.id ORDER BY s DESC")
 
         scores = Hash[*res.flatten]
         prev = nil
@@ -462,8 +510,13 @@ class DB
                     cnt = 3
                 end
             end
-            scores[v[1]] += cnt
+            if scores[v[1]]
+                scores[v[1]] += cnt
+            else
+                scores[v[1]] = cnt
+            end
         end
+        scores = scores.sort_by {|key, val| val}.reverse
         scores
     end
 

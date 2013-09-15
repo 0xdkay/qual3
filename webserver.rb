@@ -19,7 +19,6 @@ class Array
 end
 
 class Webserver < Sinatra::Base
-
     register Sinatra::SessionAuth
     register Sinatra::Challenge
     register Sinatra::Notice
@@ -49,6 +48,11 @@ class Webserver < Sinatra::Base
             session[:id]
         end
 
+        def get_ranks_all
+            @db = settings.db
+            @db.get_ranks_all
+        end
+
         def get_rank_series min
             @db = settings.db
             @db.get_rank_series min
@@ -59,6 +63,10 @@ class Webserver < Sinatra::Base
 
     get '/' do 
         slim :index
+    end
+
+    get '/rank_all' do
+        slim :rank_all
     end
 
     get '/rank/:min' do
